@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "775546874587",
+    "project_id": "incontiencia-db",
+    "storage_bucket": "incontiencia-db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:775546874587:android:7c5db3d13cd5aa7c96bafe",
+        "android_client_info": {
+          "package_name": "com.proyecto.loginpage"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "775546874587-50pm24625kko4dktgd25en9svtj2f5kv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDB9zZSjM5tNOwIaFuowCtPJaEWjEZ4j0w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "775546874587-50pm24625kko4dktgd25en9svtj2f5kv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

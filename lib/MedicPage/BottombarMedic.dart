@@ -1,23 +1,7 @@
-//import 'dart:html';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:loginpage/PasswordMed.dart';
-import 'package:loginpage/loginPage.dart';
-import 'package:loginpage/homepageMed.dart';
-import 'package:loginpage/profileMed.dart';
-import 'package:loginpage/profileinfoMed.dart';
-
-class MedicPage extends StatelessWidget {
-  const MedicPage({ Key? key }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: 
-      BottomBar(),
-    );
-  }
-}
+import 'package:loginpage/MedicPage/homepageMed.dart';
+import 'package:loginpage/MedicPage/profileinfoMed.dart';
+import 'dart:ffi';
 
 class BottomBar extends StatefulWidget {
   const BottomBar({ Key? key }) : super(key: key);
@@ -30,7 +14,6 @@ class _BottomBarState extends State<BottomBar> {
   int currentIndex= 0;
   final screens = const [
     homePage(),
-    alertaMed(),
     MyproInfoMed(),
   ];
   
@@ -52,11 +35,6 @@ class _BottomBarState extends State<BottomBar> {
             icon: Icon(Icons.home),
             label: 'Home',
             backgroundColor: Colors.amber,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Listas',
-            backgroundColor: Colors.greenAccent,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

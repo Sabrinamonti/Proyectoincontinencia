@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:loginpage/medicPage.dart';
-import 'package:loginpage/profileinfoMed.dart';
+import 'package:loginpage/MedicPage/homepageMed.dart';
+import 'package:loginpage/MedicPage/profileinfoMed.dart';
 
 class MyprofileMed extends StatefulWidget {
   const MyprofileMed({ Key? key }) : super(key: key);
@@ -77,7 +77,7 @@ class _MyprofileMedState extends State<MyprofileMed> {
                       ),
                       onPressed: () {
                         Navigator.push(context, 
-                          MaterialPageRoute(builder: (context) => const MedicPage()),
+                          MaterialPageRoute(builder: (context) => const homePage()),
                         );
                       }, 
                       child: const Text('Guardar'))

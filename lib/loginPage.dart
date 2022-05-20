@@ -1,9 +1,39 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:loginpage/medicPage.dart';
+import 'package:loginpage/MedicPage/BottombarMedic.dart';
+import 'package:loginpage/MedicPage/homepageMed.dart';
+import 'package:loginpage/PatientPage/Homepagepatient.dart';
 import 'package:loginpage/signinPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:ffi';
 
-class LoginPage extends StatelessWidget {
+import 'backend/logincode.dart';
+
+class LoginPage extends StatefulWidget {
   const LoginPage({ Key? key }) : super(key: key);
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> { 
+
+final firestoreInstance = FirebaseFirestore.instance;
+final FirebaseAuth _auth = FirebaseAuth.instance;
+String email= '';
+String password= '';
+
+Future<void> getUsers() async {
+  //CollectionReference tipoUsers= FirebaseFirestore.instance.collection('Usuario');
+  print("hola Sabri, aqui estoy");
+  firestoreInstance.collection("Usuario").get().then((querySnapshot){
+    querySnapshot.docs.forEach((element) {
+      firestoreInstance.collection("Usuario").doc(element.id).get().then((querySnapshot){
+        print(querySnapshot.data());
+      });
+    });
+  });
+}
 
   Widget createTitleWelcome() {
     return Container(
@@ -42,8 +72,11 @@ class LoginPage extends StatelessWidget {
                   icon: Icon(
                     Icons.person, color: Colors.white,
                     ),
-                  hintText: 'Ingrese Nombre de usuario'
+                  hintText: 'Ingrese su Email'
                   ),
+              onChanged: (val){
+                email= val;
+              },
             ),
           );
   }
@@ -63,6 +96,9 @@ class LoginPage extends StatelessWidget {
                 hintText: 'Ingrese Contraseña'
                 ),
               obscureText: true,
+              onChanged: (val) {
+                password = val;
+              },
             ),
           );
   }
@@ -70,20 +106,27 @@ class LoginPage extends StatelessWidget {
   Widget createLoginButton(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(top: 32), 
-      child: ElevatedButton(
+      child:
+      ElevatedButton(
         style: ElevatedButton.styleFrom(
           primary: Colors.blue,
           onPrimary: Colors.white,
           minimumSize: Size(120, 50),
         ),
-        child: Text('Iniciar Session'), 
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const MedicPage()),
-          );
+        child: 
+        Text('Iniciar Session'), 
+        onPressed: () async {
+          try {
+          getUsers();
+          await _auth.signInWithEmailAndPassword(email: email, password: password);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Se ingreso exitosamente')));
+          Navigator.push(context,MaterialPageRoute(builder: (context) => const BottomBar()));
+          } on FirebaseAuthException catch(e) {
+            showDialog(context: context, builder: (ctx)=> AlertDialog(title: Text('Ingrese los datos correctos')));
+          }
         },
-    ));
+      ),
+    );
   }
 
 
@@ -107,19 +150,19 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 30),
-        margin: const EdgeInsets.all(30),
-        decoration: BoxDecoration(color: Colors.white),
-        child: Column(children: [
+        //margin: const EdgeInsets.all(30),
+        //decoration: BoxDecoration(color: Colors.white),
+        children: [
+        Column(children: [
           createTitleWelcome(),     
           createUsernameInput(context),
           createPasswordInput(),
           createLoginButton(context),
           createAccount(context),
         ]),
-      ),
+      ]),
     );
   }
 }
-

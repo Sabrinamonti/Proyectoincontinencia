@@ -37,8 +37,14 @@ dependencies:
   charts_flutter: ^0.12.0
   fl_chart: ^0.50.1
   calendar_view: ^0.0.4
-  table_calendar: ^3.0.5
+  table_calendar: 
   shared_preferences: ^2.0.13
+  flutter_slidable: ^1.2.1
+  firebase_auth: ^3.3.17
+  firebase_core: 
+  cloud_firestore:
+  firebase_database: 
+  provider: 
 
 dev_dependencies:
   flutter_test:

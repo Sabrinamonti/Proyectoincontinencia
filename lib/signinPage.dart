@@ -1,232 +1,44 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:loginpage/backend/logincode.dart';
 import 'package:loginpage/loginPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum caracter {paciente, medico, tecnico}
+ 
 
-class MyUtypeWidget extends StatefulWidget {
-  const MyUtypeWidget({ Key? key }) : super(key: key);
 
-  @override
-  State<MyUtypeWidget> createState() => _MyUtypeWidgetState();
-}
-
-class _MyUtypeWidgetState extends State<MyUtypeWidget> {
-  caracter? _character = caracter.paciente;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(top: 10, bottom: 10),
-      child: Row(
-        children: [
-          Expanded(child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.only(top: 1, bottom: 5),
-                child: const Text('Marcar el tipo de Usuario'),
-              ),
-              ListTile(
-          title: const Text('Paciente'),
-          leading: Radio(
-            value: caracter.paciente, 
-            groupValue: _character, 
-            onChanged: (caracter? value) {
-              setState(() {
-                _character= value;
-              });
-            },
-          ),
-        ),
-        ListTile(
-          title: const Text('Medico'),
-          leading: Radio(
-            value: caracter.medico, 
-            groupValue: _character, 
-            onChanged: (caracter? value) {
-              setState(() {
-                _character = value;
-              });
-            }
-          ),
-        ),
-        ListTile(
-         title: const Text('Tecnico'),
-          leading: Radio(
-            value: caracter.tecnico, 
-            groupValue: _character, 
-            onChanged: (caracter? value) {
-              setState(() {
-                _character = value;
-              });
-            }
-          ),
-        ),
-            ],
-          ))
-        ],
-      ),
-    );
-  }
-}
-
-class SignupPage extends StatelessWidget {
+class SignupPage extends StatefulWidget {
   const SignupPage({ Key? key }) : super(key: key);
 
-  Widget createtitle() {
-    return Container(
-      padding: EdgeInsets.only(top: 10),
-      child: Text('Registro de nuevos usuarios', 
-      style: TextStyle(fontWeight: FontWeight.bold, 
-      color: Colors.black, 
-      fontSize: 25),
-      textAlign: TextAlign.center,
-      ),
-    );
-  }
+  @override
+  State<SignupPage> createState() => _SignupPageState();
+}
 
-  Widget createnombre() {
-    return Container(
-      padding: const EdgeInsets.only(top: 10, bottom: 5),
-      margin: const EdgeInsets.only(top: 30, bottom: 15),
-      child: Row(
-        children: [
-          Expanded(child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.only(top: 1, bottom: 10),
-                child: Text('Nombre Completo'),
-              ),
-              TextFormField(
-              decoration: 
-                InputDecoration(
-                  icon: Icon(
-                    Icons.person, color: Colors.lightBlueAccent,
-                    ),
-                  hintText: 'Ingrese Nombre de usuario'
-                  ),
-            ),
-            ],
-          ))
-        ],
-      ) 
-    );
-  }
+class _SignupPageState extends State<SignupPage> {
+  caracter? _character = null;
+//final AuthService auth = AuthService();
+final FirebaseAuth _auth = FirebaseAuth.instance;
+final _formKey = GlobalKey<FormState>(); 
 
-  Widget createnumero() {
-    return Container(
-      padding: const EdgeInsets.only(top: 3, bottom: 15),
-      margin: const EdgeInsets.symmetric(horizontal: 1, vertical: 0),
-      decoration: BoxDecoration(
-      color: Color.fromARGB(255, 120, 132, 138),
-        //borderRadius: BorderRadius.circular(29)
-      ),
-      child: Row(
-        children: [
-          Expanded(child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.only(top: 1, bottom: 8),
-                child: Text('Numero Telefónico',),
-              ),
-              TextFormField(
-              decoration: 
-                InputDecoration(
-                  icon: Icon(
-                    Icons.phone, color: Colors.lightBlueAccent,
-                    ),
-                  hintText: 'Ingrese su numero de telefono'
-                  ),
-            ),
-            ],
-          ))
-        ],
-      )
-    );
-  }
-
-  Widget createcontra() {
-    return Container(
-      padding: const EdgeInsets.only(top: 5, bottom: 15),
-      child: Row(
-        children: [
-          Expanded(child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.only(top: 1, bottom: 5),
-                child: Text('Contraseña'),
-              ),
-              TextFormField(
-              decoration: InputDecoration(
-                icon: Icon(Icons.lock, 
-                color: Colors.blueGrey
-                ),
-                hintText: 'Ingrese Contraseña'
-                ),
-              obscureText: true,
-            ),
-            ],
-          ))
-        ],
-      )
-    );
-  }
-
-  Widget createrecontra() {
-    return Container(
-      padding: const EdgeInsets.only(top: 5, bottom: 10),
-      child: Row(
-        children: [
-          Expanded(child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.only(top: 1, bottom: 8),
-                child: Text('Confirmar Contraseña'),
-              ),
-              TextFormField(
-              decoration: InputDecoration(
-                icon: Icon(Icons.lock, 
-                color: Colors.blueGrey
-                ),
-                hintText: 'Ingrese Contraseña'
-                ),
-              obscureText: true,
-            ),
-            ],
-          ))
-        ],
-      )
-    );
-  }
-  
-  Widget createbuttonsign(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(top: 30),
-      margin: const EdgeInsets.symmetric(horizontal: 1, vertical: 10),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          primary: Colors.blue,
-          onPrimary: Colors.white,
-          minimumSize: Size(120, 50),
-        ),
-        child: const Text('Crear'), 
-        onPressed: () {
-          Navigator.push(context, 
-            MaterialPageRoute(builder: (context) => const LoginPage())
-            );
-        },
-      )
-    );
-  }
+String username = '';
+var telef = '';
+String email = '';
+String password= '';
+String tipoUsuario = '';
 
   @override
   Widget build(BuildContext context) {
+    CollectionReference users= FirebaseFirestore.instance.collection('Usuario');
+    print(_character);
     return Scaffold(
+      backgroundColor: Colors.green[200],
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.green[400],
+        title: const Text('Registro Nuevos Usuarios', style: TextStyle(color: Colors.white),),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -236,23 +48,213 @@ class SignupPage extends StatelessWidget {
           },
         ),
       ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
+      body: ListView(
+        
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         //margin: const EdgeInsets.all(10),
+        children: [Form( 
+          key: _formKey,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          createtitle(),
-          createnombre(),
-          createnumero(),
-          createcontra(),
-          MyUtypeWidget(),
-          createbuttonsign(context)
-        ]),
-      ),
+          Container(
+          padding: const EdgeInsets.only(top: 0),
+          child: const Text('Ingrese los datos', 
+          style: TextStyle(fontWeight: FontWeight.bold, 
+          color: Colors.black,
+          fontSize: 25),
+          textAlign: TextAlign.center,
+          ),
+        ),
+        const SizedBox(height:20),
+          Container(
+            child: Row(
+              children: [
+                Expanded(child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.only(top: 1, bottom: 8),
+                      child: Text('Nombre Completo', style: TextStyle(fontWeight: FontWeight.bold),),
+                    ),
+                    TextFormField(
+                    decoration: 
+                      const InputDecoration(
+                        icon: Icon(
+                          Icons.person, color: Colors.blueGrey,
+                          ),
+                        hintText: 'Ingrese Nombre de usuario'
+                        ),
+                        validator: (val) => val!.isEmpty ? 'Ingrese nombre' : null,
+                        onChanged: (val) {
+                          username = val;
+                        },
+                      ),
+                    ],
+                  ))
+                ],
+              )
+            ),
+        const SizedBox(height: 15),
+          Container(
+            child: Row(
+              children: [
+                Expanded(child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.only(top: 1, bottom: 8),
+                      child: Text('Numero Telefónico', style: TextStyle(fontWeight: FontWeight.bold),),
+                    ),
+                    TextFormField(
+                    decoration: 
+                      const InputDecoration(
+                        icon: Icon(
+                          Icons.phone, color: Colors.blueGrey,
+                          ),
+                        hintText: 'Ingrese su numero de telefono'
+                        ),
+                        validator: (val) => val!.isEmpty ? 'Ingrese telefono' : null,
+                        onChanged: (val) {
+                          telef = val;
+                        },
+                      ),
+                    ],
+                  ))
+                ],
+              )
+            ),
+        const SizedBox(height: 15),
+          Container(
+            child: Row(
+              children: [
+                Expanded(child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.only(top: 1, bottom: 5),
+                      child: Text('Email', style: TextStyle(fontWeight: FontWeight.bold),),
+                    ),
+                    TextFormField(
+                    decoration: const InputDecoration(
+                      icon: Icon(Icons.email, 
+                      color: Colors.blueGrey
+                      ),
+                      hintText: 'Ingrese su Correo Electronico'
+                      ),
+                      validator: (val) => val!.isEmpty ? 'Ingrese email' : null,
+                      onChanged: (val){
+                        email= val;
+                      },
+                    ),
+                  ],
+                ))
+              ],
+            )
+          ),
+          const SizedBox(height: 15),
+          Container(
+            child: Row(
+              children: [
+                Expanded(child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.only(top: 1, bottom: 8),
+                      child: Text('Contraseña', style: TextStyle(fontWeight: FontWeight.bold),),
+                    ),
+                    TextFormField(
+                    decoration: const InputDecoration(
+                      icon: Icon(Icons.lock, 
+                      color: Colors.blueGrey
+                      ),
+                      hintText: 'Ingrese Contraseña'
+                      ),
+                    obscureText: true,
+                    validator: (val) => val!.length < 6 ? 'Ingrese contraseña mayor a 6 valores' : null,
+                    onChanged: (val){
+                      password= val;
+                    },
+                    ),
+                  ],
+                ))
+              ],
+            )
+          ),
+          const SizedBox(height: 15),
+          Container(
+            child: Row(
+              children: [
+                Expanded(child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.only(top: 1, bottom: 0),
+                      child: const Text('Marcar el tipo de Usuario', style: TextStyle(fontWeight: FontWeight.bold),),
+                    ),
+                    ListTile(
+                      title: const Text('Paciente'),
+                      leading: Radio(
+                        value: caracter.paciente, 
+                        groupValue: _character, 
+                        onChanged: (caracter? value) {
+                          setState(() {
+                            _character= value;
+                            tipoUsuario = 'Paciente';
+                          });
+                        },
+                      ),
+                    ),
+                  ListTile(
+                  title: const Text('Medico'),
+                  leading: Radio(
+                    value: caracter.medico, 
+                    groupValue: _character, 
+                    onChanged: (caracter? value) {
+                      setState(() {
+                      _character = value;
+                      tipoUsuario = 'Medico';
+                      });
+                    }
+                  )),
+                ],
+              ))
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+          Container(
+            child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.blue,
+              onPrimary: Colors.white,
+              minimumSize: Size(120, 50),
+            ),
+            child: const Text('Registrar'), 
+            onPressed: () async {
+              if(_formKey.currentState!.validate()) {
+                //Store all data
+                users
+                .add({'Nombre': username, 'Telefono': telef, 'Email': email, 'Contrasena': password, 'TipoUsuario': tipoUsuario})
+                .then((value) => print('Usuario Registrado'))
+                .catchError((error)=> print('Ocurrio un error'));
+                //firebaseautenticate
+                try {
+                  await _auth.createUserWithEmailAndPassword(email: email, password: password);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Se registro exitosamente'),));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+                } catch(e) {
+                  print(e);
+                }
+              }
+              },
+            )
+          )
+        ])
+        ),
+      ]),
     );
   }
+
 }
 

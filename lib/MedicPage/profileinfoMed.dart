@@ -1,8 +1,6 @@
-//import 'dart:html';
-
 import 'package:flutter/material.dart';
-import 'package:loginpage/medicPage.dart';
-import 'package:loginpage/profileMed.dart';
+import 'package:loginpage/MedicPage/EditprofileMed.dart';
+import 'package:loginpage/MedicPage/homepageMed.dart';
 
 class MyproInfoMed extends StatefulWidget {
   const MyproInfoMed({ Key? key }) : super(key: key);
@@ -12,6 +10,7 @@ class MyproInfoMed extends StatefulWidget {
 }
 
 class _MyproInfoMedState extends State<MyproInfoMed> {
+
   @override
   Widget build(BuildContext context) {
 
@@ -20,7 +19,7 @@ class _MyproInfoMedState extends State<MyproInfoMed> {
         leading: BackButton( 
           onPressed: () {
             Navigator.push(context, 
-            MaterialPageRoute(builder: (context) => const MedicPage()),
+            MaterialPageRoute(builder: (context) => const homePage()),
             );
           },
         ),
