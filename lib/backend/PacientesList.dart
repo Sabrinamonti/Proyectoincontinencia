@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class DatabaseManagement {
-  final Query<Map<String, dynamic>> userslist = FirebaseFirestore.instance.collection('Usuario').where("TipoUsuario", isEqualTo: "Paciente");
+class PacientesList{
+final Query<Map<String, dynamic>> userslist = FirebaseFirestore.instance.collection('Usuario').where("TipoUsuario", isEqualTo: "Paciente");
 
-  Future gerUsersList () async {
+Future getUsersList () async {
     List itemslist= [];
     try {
       await userslist.get().then((value) {
@@ -18,4 +18,5 @@ class DatabaseManagement {
       return null;
     }
   }
+
 }

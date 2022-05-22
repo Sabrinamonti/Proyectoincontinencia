@@ -13,6 +13,7 @@ class _UsersListState extends State<UsersList> {
   TextEditingController? _textEditingController = TextEditingController();
   List usuarioslista=[];
   List usersdata =[];
+  List filterUsers = [];
 
   @override
   void initState() {
@@ -27,6 +28,7 @@ class _UsersListState extends State<UsersList> {
     } else {
       setState(() {
         usersdata = resultant;
+        usuarioslista = usersdata;
       });
     }
   }
@@ -56,6 +58,8 @@ class _UsersListState extends State<UsersList> {
                 => element.toString().toLowerCase().contains(value.toLowerCase())).toList();
               });
               print(usuarioslista);
+              print("cantidad de pacientes: " + usuarioslista.length.toString());
+              filterUsers = usuarioslista;
             },
             controller: _textEditingController,
             decoration: InputDecoration(
@@ -71,8 +75,8 @@ class _UsersListState extends State<UsersList> {
             final item = usersdata[index];
             return Card(
               child: ListTile(
-                title: Text(usersdata[index]['Nombre']),
-                subtitle: Text(usersdata[index]['Telefono']),
+                title: Text(usuarioslista[index]['Nombre']),
+                subtitle: Text(usuarioslista[index]['Telefono']),
                 leading: const CircleAvatar(
                   child: Image(
                     image: AssetImage('assets/imageninicio/imageninicio.jpg'),

@@ -21,8 +21,10 @@ class _EjerciciospageState extends State<Ejerciciospage> {
           child: Column(
             children: [
               bottonejercicio('assets/imageninicio/imageninicio.jpg', 'Ejercicio1'),
-              bottonejercicio('assets/imageninicio/imageninicio.jpg', 'Ejercicio2'),
-              bottonejercicio('assets/imageninicio/imageninicio.jpg', 'Ejercicio3')
+              SizedBox(height: 10),
+              bottonejercicio2('assets/imageninicio/imageninicio.jpg', 'Ejercicio2'),
+              SizedBox(height: 10),
+              bottonejercicio('assets/imageninicio/imageninicio.jpg', 'Ejercicio3'),
             ],
           ),
         ),
@@ -32,6 +34,29 @@ class _EjerciciospageState extends State<Ejerciciospage> {
   }
 
   Widget bottonejercicio (String imagen, String text){
+    return InkWell(
+          splashColor: Colors.black26,
+          onTap: (){},
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Ink.image(
+            image: AssetImage(imagen),
+            height: 150,
+            width: 150,
+            fit: BoxFit.cover,
+            ),
+            SizedBox(height: 6),
+            Text(
+              text,
+              style: TextStyle(fontSize: 28, color: Colors.white),
+            ),
+            SizedBox(height: 6),
+          ])
+        );
+  }
+
+  Widget bottonejercicio2 (String imagen, String text){
     return InkWell(
           splashColor: Colors.black26,
           onTap: (){},

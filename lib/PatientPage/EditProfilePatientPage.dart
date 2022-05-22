@@ -1,0 +1,376 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+
+class EditNameFormPage extends StatefulWidget {
+  const EditNameFormPage({ Key? key }) : super(key: key);
+
+  @override
+  State<EditNameFormPage> createState() => _EditNameFormPageState();
+}
+
+class _EditNameFormPageState extends State<EditNameFormPage> {
+  final _formKey = GlobalKey<FormState>();
+  final NombreController= TextEditingController();
+
+  @override
+  void dispose() {
+    NombreController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Editar Nombre'),
+        leading: IconButton(
+          onPressed: (){}, 
+          icon: const Icon(Icons.arrow_back),
+        ),
+      ),
+      body: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const SizedBox(
+              width: 330,
+              child: Text('Ingrese su Nombre completo', 
+              style: TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+              )),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 40, 16, 0),
+                  child: SizedBox(
+                    height: 100,
+                    width: 150,
+                    child: TextFormField(
+                      validator: (value){
+                        if(value == null || value.isEmpty){
+                          return 'Porfavor Ingrese su Nombre Completo';
+                        } else {
+                          return null;
+                        }
+                      },
+                      decoration: InputDecoration(labelText: 'Nombre completo'),
+                      controller: NombreController,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 40, 16, 0),
+                  child: SizedBox(
+                    height: 330,
+                    width: 50,
+                    child: ElevatedButton(
+                      onPressed: (){
+                        if(_formKey.currentState!.validate()){
+
+                        }
+                      },
+                      child: const Text('Guardar', style: TextStyle(fontSize: 15)),
+                    ),
+                  ),
+                )
+              ],
+            )
+          ],
+        )
+      ),
+    );
+  }
+}
+
+class EditPhoneFormPage extends StatefulWidget {
+  const EditPhoneFormPage({ Key? key }) : super(key: key);
+
+  @override
+  State<EditPhoneFormPage> createState() => _EditPhoneFormPageState();
+}
+
+class _EditPhoneFormPageState extends State<EditPhoneFormPage> {
+  final _formKey = GlobalKey<FormState>();
+  final TelefController = TextEditingController();
+
+  @override
+  void dispose() {
+    TelefController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Editar Telefono'),
+        leading: IconButton(
+          onPressed: (){}, 
+          icon: const Icon(Icons.arrow_back),
+        ),
+      ),
+      body: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const SizedBox(
+              width: 330,
+              child: Text('Ingrese su Numero de Telefono', 
+              style: TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+              )),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 40, 16, 0),
+                  child: SizedBox(
+                    height: 100,
+                    width: 150,
+                    child: TextFormField(
+                      validator: (value){
+                        if(value == null || value.isEmpty){
+                          return 'Porfavor Ingrese numero de telefono';
+                        } else {
+                          return null;
+                        }
+                      },
+                      decoration: InputDecoration(labelText: 'Telefono'),
+                      controller: TelefController,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 40, 16, 0),
+                  child: SizedBox(
+                    height: 330,
+                    width: 50,
+                    child: ElevatedButton(
+                      onPressed: (){
+                        if(_formKey.currentState!.validate()){
+
+                        }
+                      },
+                      child: const Text('Guardar', style: TextStyle(fontSize: 15)),
+                    ),
+                  ),
+                )
+              ],
+            )
+          ],
+        )
+      ),
+    );
+  }
+}
+
+class EditEmailFormPage extends StatefulWidget {
+  const EditEmailFormPage({ Key? key }) : super(key: key);
+
+  @override
+  State<EditEmailFormPage> createState() => _EditEmailFormPageState();
+}
+
+class _EditEmailFormPageState extends State<EditEmailFormPage> {
+  final _formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Editar Email'),
+        leading: IconButton(
+          onPressed: (){}, 
+          icon: const Icon(Icons.arrow_back),
+        ),
+      ),
+      body: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const SizedBox(
+              width: 330,
+              child: Text('Ingrese su Email', 
+              style: TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+              )),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 40, 16, 0),
+                  child: SizedBox(
+                    height: 100,
+                    width: 150,
+                    child: TextFormField(
+                      validator: (value){
+                        if(value == null || value.isEmpty){
+                          return 'Porfavor Ingrese su Email';
+                        } else {
+                          return null;
+                        }
+                      },
+                      decoration: InputDecoration(labelText: 'Email'),
+                      controller: emailController,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 40, 16, 0),
+                  child: SizedBox(
+                    height: 330,
+                    width: 50,
+                    child: ElevatedButton(
+                      onPressed: (){
+                        if(_formKey.currentState!.validate()){
+
+                        }
+                      },
+                      child: const Text('Guardar', style: TextStyle(fontSize: 15)),
+                    ),
+                  ),
+                )
+              ],
+            )
+          ],
+        )
+      ),
+    );
+  }
+}
+
+class EditImagePage extends StatefulWidget {
+  const EditImagePage({ Key? key }) : super(key: key);
+
+  @override
+  State<EditImagePage> createState() => _EditImagePageState();
+}
+
+class _EditImagePageState extends State<EditImagePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Editar Imagen de perfil'),
+        leading: IconButton(
+          onPressed: (){}, 
+          icon: const Icon(Icons.arrow_back),
+        ),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 330,
+            child: const Text('Subir una foto', style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
+            )
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 20),
+            child: SizedBox(
+              width: 330,
+              child: GestureDetector(
+                onTap: () async{
+
+                },
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 40),
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: SizedBox(
+                width: 330,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: (){}, 
+                  child: const Text('Guardar', style: TextStyle(fontSize: 15)),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class DisplayImage extends StatelessWidget {
+  final String imagePath;
+  final VoidCallback onPressed;
+  
+  const DisplayImage({ Key? key, required this.imagePath, required this.onPressed }) : super(key: key);
+
+
+  @override
+  Widget build(BuildContext context) {
+    final color= Color.fromRGBO(64, 105, 225, 1);
+
+    return Center(
+      child: Stack(
+        children: [
+          buildImage(color),
+          Positioned(child: buildEditIcon(color),
+          right: 4,
+          top: 10,
+        ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildImage (Color color){
+    //final image= imagePath.contains('https://')
+    //? NetworkImage(imagePath) : FileImage(File(imagePath));
+    return CircleAvatar(
+      radius: 75,
+      backgroundColor: color,
+      child: CircleAvatar(
+       // backgroundImage:
+       radius: 70,
+      ),
+    );
+  }
+
+  Widget buildEditIcon(Color color) => buildCircle(
+    all: 8,
+    child: Icon(Icons.edit, color: color, size: 20,)
+  );
+
+  Widget buildCircle({
+    required Widget child, 
+    required double all,
+  }) => ClipOval(
+    child: Container(
+      padding: EdgeInsets.all(all),
+      color: Colors.white,
+      child: child,
+    ),
+  );
+}

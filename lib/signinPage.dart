@@ -234,10 +234,18 @@ String tipoUsuario = '';
             onPressed: () async {
               if(_formKey.currentState!.validate()) {
                 //Store all data
-                users
-                .add({'Nombre': username, 'Telefono': telef, 'Email': email, 'Contrasena': password, 'TipoUsuario': tipoUsuario})
-                .then((value) => print('Usuario Registrado'))
-                .catchError((error)=> print('Ocurrio un error'));
+                if(tipoUsuario == "Paciente"){
+                  users
+                  .add({'Nombre': username, 'Telefono': telef, 'Email': email, 'Contrasena': password, 'TipoUsuario': tipoUsuario, 'ProfsId': []})
+                  .then((value) => print('Usuario Paciente creado exitosamente'))
+                  .catchError((error)=> print('Ocurrio un error'));
+                }else{
+                  users
+                  .add({'Nombre': username, 'Telefono': telef, 'Email': email, 'Contrasena': password, 'TipoUsuario': tipoUsuario, 'PacsId': []})
+                  .then((value) => print('Usuario Medico Creado exitosamente'))
+                  .catchError((error)=> print('Ocurrio un error'));
+                }
+                
                 //firebaseautenticate
                 try {
                   await _auth.createUserWithEmailAndPassword(email: email, password: password);

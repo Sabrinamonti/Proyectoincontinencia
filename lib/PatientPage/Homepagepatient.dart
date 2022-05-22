@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:loginpage/PatientPage/EjerciciosPage.dart';
+import 'package:loginpage/PatientPage/ProfilePagePatient.dart';
+import 'package:loginpage/PatientPage/TareasPage.dart';
 
 class TabBarPaciente extends StatefulWidget {
   const TabBarPaciente({ Key? key }) : super(key: key);
@@ -34,8 +36,8 @@ class _TabBarPacienteState extends State<TabBarPaciente> {
           body: const TabBarView(
             children: [
               Ejerciciospage(),
-              Ejerciciospage(),
-              Ejerciciospage(),
+              TareasTratamientos(),
+              ProfilePatient(),
             ]
           ),
         ),
