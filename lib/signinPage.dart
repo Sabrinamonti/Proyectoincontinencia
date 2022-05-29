@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:loginpage/backend/logincode.dart';
 import 'package:loginpage/loginPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -235,24 +232,25 @@ String tipoUsuario = '';
               if(_formKey.currentState!.validate()) {
                 //Store all data
                 if(tipoUsuario == "Paciente"){
-                  users
-                  .add({'Nombre': username, 'Telefono': telef, 'Email': email, 'Contrasena': password, 'TipoUsuario': tipoUsuario, 'ProfsId': []})
-                  .then((value) => print('Usuario Paciente creado exitosamente'))
-                  .catchError((error)=> print('Ocurrio un error'));
-                }else{
-                  users
-                  .add({'Nombre': username, 'Telefono': telef, 'Email': email, 'Contrasena': password, 'TipoUsuario': tipoUsuario, 'PacsId': []})
-                  .then((value) => print('Usuario Medico Creado exitosamente'))
-                  .catchError((error)=> print('Ocurrio un error'));
-                }
-                
-                //firebaseautenticate
-                try {
-                  await _auth.createUserWithEmailAndPassword(email: email, password: password);
+                  try {
+                  await _auth.createUserWithEmailAndPassword(email: email, password: password).then((value) => {
+                    users.doc(value.user?.uid).set({'Id': value.user?.uid ,'Nombre': username, 'Telefono': telef, 'Email': email, 'Contrasena': password, 'TipoUsuario': tipoUsuario, 'ProfsId': []})
+                  });
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Se registro exitosamente'),));
                   Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
                 } catch(e) {
                   print(e);
+                }
+                } else{
+                  try {
+                  await _auth.createUserWithEmailAndPassword(email: email, password: password).then((value) => {
+                    users.doc(value.user?.uid).set({'Id': value.user?.uid, 'Nombre': username, 'Telefono': telef, 'Email': email, 'Contrasena': password, 'TipoUsuario': tipoUsuario, 'PacsId': []})
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Se registro exitosamente'),));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+                } catch(e) {
+                  print(e);
+                }
                 }
               }
               },

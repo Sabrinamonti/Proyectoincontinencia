@@ -4,6 +4,7 @@ import 'package:loginpage/MedicPage/BottombarMedic.dart';
 import 'package:loginpage/MedicPage/Userslist.dart';
 import 'package:loginpage/MedicPage/TablasPageMed.dart';
 import 'package:loginpage/MedicPage/Userslist.dart';
+import 'package:loginpage/backend/PacientesList.dart';
 import 'package:loginpage/loginPage.dart'; 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:loginpage/MedicPage/profileinfoMed.dart';
@@ -18,14 +19,30 @@ class homePage extends StatefulWidget {
 }
 
 class _homePageState extends State<homePage> {
+  TextEditingController? _textEditingController = TextEditingController();
+  List Pacienteslista=[];
   final _auth = FirebaseAuth.instance.currentUser;
-  var items = [];
+  List items = [];
+  List datospacientes = [];
 
-  void buscarnombre (String value) {
-    setState(() {
-      
-    });
+  @override
+  void initState() {
+    super.initState();
+    fetchdatabaselist();
   }
+
+  fetchdatabaselist() async {
+    dynamic resultant = await PacientesList().GetUserId();
+    if(resultant == null) {
+      print('No se puede obtener ls informacion');
+    } else {
+      setState(() {
+        items = resultant;
+        datospacientes = items;
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -55,21 +72,46 @@ class _homePageState extends State<homePage> {
               borderRadius: BorderRadius.all(Radius.circular(29))
             )
           ),
-          onChanged: (value) => buscarnombre(value),
+          onChanged: (value){
+              setState(() {
+                datospacientes = items.where((element) 
+                => element.toString().toLowerCase().contains(value.toLowerCase())).toList();
+              });
+              //filterUsers = usuarioslista;
+            },
+          controller: _textEditingController,
         ),
         Expanded(
           child: 
           ListView.builder(
-          itemCount: names.length,
+          itemCount: _textEditingController!.text.isNotEmpty ? datospacientes.length : items.length,
           shrinkWrap: true,
-          itemBuilder: (BuildContext context, int index) => 
-          Container(
-           // width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            child: 
-            Listitem(context, index),
-            ),
-          )
+          itemBuilder: (BuildContext context, int index) {
+            return Card(
+              child: ListTile(
+                shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+                ),
+                title:Text(
+                  datospacientes[index]['Nombre'], 
+                  style: const TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold)
+                ),
+                subtitle: Text(datospacientes[index]['Telefono']),
+                leading: const CircleAvatar(
+                  backgroundColor: CupertinoColors.systemPurple,
+                  foregroundColor: Colors.white,
+                  //backgroundImage: ,
+                ),
+                trailing: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: ((context) => tablaspageMed())));
+                  }, 
+                  child: Text('Ver informacion'), 
+                ),
+              ),
+            );
+          }
+        ),
         ),
         ElevatedButton(
           onPressed: () {
@@ -83,84 +125,4 @@ class _homePageState extends State<homePage> {
       )
     );
   }
-}
-
-
-Widget Listitem (BuildContext context, int index) {
-
-  return Card (
-    child:  ListTile(
-            shape: RoundedRectangleBorder(
-               borderRadius: BorderRadius.circular(10),
-              ),
-              title:Text(
-                names[index], 
-                style: const TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold)
-              ),
-              leading: const CircleAvatar(
-                backgroundColor: CupertinoColors.systemPurple,
-                foregroundColor: Colors.white,
-                //backgroundImage: ,
-              ),
-              trailing: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: ((context) => tablaspageMed())));
-                }, 
-                child: Text('Ver informacion'), 
-              ),
-            ),
-  );
-}
-
-class MySearch extends SearchDelegate {
-
-  final List<String> names;
-  List<String> _filter =[];
-  MySearch(this.names);
-
-  @override 
-  Widget? buildLeading(BuildContext context) {
-    return
-    IconButton(
-    onPressed: () => close(context, null), 
-    icon: const Icon(Icons.arrow_back));
-  }
-
-  @override 
-  List<Widget>? buildActions(BuildContext context) {
-    return [
-    IconButton(
-      onPressed: () {
-        if(query.isEmpty) {
-          close(context, null);
-        } else {
-        query = '';
-        }
-      }, 
-      icon: const Icon(Icons.clear))
-    ];
-  }
-
-  @override 
-  Widget buildResults(BuildContext context) { 
-    final List<String> nombres = names.where((Nombre) => Nombre.toLowerCase().contains(
-      query.toLowerCase(),
-      ),
-    ).toList();
-
-    return ListView.builder(
-      itemCount: nombres.length,
-      itemBuilder: (context, index) => ListTile(title: Text(nombres[index]),)
-      );
-  }
-
-  @override 
-  Widget buildSuggestions(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      child: Text('Busca el nombre del paciente', 
-      ),
-    );
-  }
-
 }

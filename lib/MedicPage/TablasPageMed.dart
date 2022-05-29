@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:loginpage/MedicPage/BottombarMedic.dart';
 import 'package:loginpage/MedicPage/LinechartsPage.dart';
 import 'package:loginpage/MedicPage/homepageMed.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:loginpage/MedicPage/tablechartPage.dart';
 
 
@@ -45,8 +44,8 @@ class _tablaspageMedState extends State<tablaspageMed> {
           ),
           body:  TabBarView(
             children:  [ 
-              LineChartSample2(),
-              TableEventsExample(),
+              CalendarEvents(),
+              CalendarEvents(),
             ],
           ),
         )

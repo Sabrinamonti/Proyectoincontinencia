@@ -5,9 +5,6 @@ import 'package:loginpage/MedicPage/homepageMed.dart';
 import 'package:loginpage/PatientPage/Homepagepatient.dart';
 import 'package:loginpage/signinPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'dart:ffi';
-
-import 'backend/logincode.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({ Key? key }) : super(key: key);
@@ -17,23 +14,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> { 
-
 final firestoreInstance = FirebaseFirestore.instance;
 final FirebaseAuth _auth = FirebaseAuth.instance;
 String email= '';
 String password= '';
-
-Future<void> getUsers() async {
-  //CollectionReference tipoUsers= FirebaseFirestore.instance.collection('Usuario');
-  print("hola Sabri, aqui estoy");
-  firestoreInstance.collection("Usuario").get().then((querySnapshot){
-    querySnapshot.docs.forEach((element) {
-      firestoreInstance.collection("Usuario").doc(element.id).get().then((querySnapshot){
-        print(querySnapshot.data());
-      });
-    });
-  });
-}
 
   Widget createTitleWelcome() {
     return Container(
@@ -117,15 +101,25 @@ Future<void> getUsers() async {
         Text('Iniciar Session'), 
         onPressed: () async {
           try {
-          getUsers();
           await _auth.signInWithEmailAndPassword(email: email, password: password);
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Se ingreso exitosamente')));
-          Navigator.push(context,MaterialPageRoute(builder: (context) => const BottomBar()));
+          final Datauser= _auth.currentUser;
+          CollectionReference documents= FirebaseFirestore.instance.collection('Usuario');
+          DocumentSnapshot snapshot = await documents.doc(Datauser?.uid).get();
+          var data= snapshot.data() as Map;
+          var typeuser = data['TipoUsuario'];
+
+          if(Datauser?.email == email && typeuser == "Paciente") {
+            Navigator.push(context,MaterialPageRoute(builder: (context) => const TabBarPaciente()));
+          }
+          else {
+            Navigator.push(context,MaterialPageRoute(builder: (context) => const BottomBar()));
+          }
           } on FirebaseAuthException catch(e) {
             showDialog(context: context, builder: (ctx)=> AlertDialog(title: Text('Ingrese los datos correctos')));
           }
         },
-      ),
+      ), 
     );
   }
 

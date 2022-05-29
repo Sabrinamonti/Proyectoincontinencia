@@ -3,7 +3,7 @@ import 'package:loginpage/MedicPage/tablechartPage.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class EventEditingPage extends StatefulWidget {
+/*class EventEditingPage extends StatefulWidget {
   
   final Events ? event;
 
@@ -235,4 +235,4 @@ class Utils {
 
     return '$time';
   }
-}
+}*/

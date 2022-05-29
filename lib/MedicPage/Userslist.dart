@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:loginpage/backend/Userslistcode.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UsersList extends StatefulWidget {
   const UsersList({ Key? key }) : super(key: key);
@@ -10,6 +12,7 @@ class UsersList extends StatefulWidget {
 }
 
 class _UsersListState extends State<UsersList> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController? _textEditingController = TextEditingController();
   List usuarioslista=[];
   List usersdata =[];
@@ -32,14 +35,18 @@ class _UsersListState extends State<UsersList> {
       });
     }
   }
-  bool press= false;
 
-  void Press (int index) {
-      setState(() {
-        press =!press;
-        press? Text('Eliminar') : Text('Agregar');
-      });
-    }
+  Future onSlide(int index) async {
+    final Datauser= _auth.currentUser;
+    final ets= usuarioslista[index]['Id'];
+    final patsid = FirebaseFirestore.instance.collection('Usuario').doc(Datauser?.uid);
+    final medsid = FirebaseFirestore.instance.collection('Usuario').doc(ets);
+    setState(() {
+       usuarioslista.removeAt(index);
+       patsid.update({'PacsId' : FieldValue.arrayUnion([ets])}).then((value) => print("UsedAdded"));
+       medsid.update({'Profs': FieldValue.arrayUnion([Datauser?.uid])}).then((value) => print('MedAdded'));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +80,20 @@ class _UsersListState extends State<UsersList> {
           itemCount: _textEditingController!.text.isNotEmpty ? usuarioslista.length : usersdata.length,
           itemBuilder: (context, index) {
             final item = usersdata[index];
-            return Card(
+            return Slidable(
+              startActionPane: ActionPane(
+                motion: const ScrollMotion(),
+                children: [
+                  SlidableAction(
+                    onPressed: (context) => onSlide(index),
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    icon: Icons.plus_one,
+                    label: 'Agregar',
+                  )
+                ],
+              ),
+              child: Card(
               child: ListTile(
                 title: Text(usuarioslista[index]['Nombre']),
                 subtitle: Text(usuarioslista[index]['Telefono']),
@@ -82,12 +102,8 @@ class _UsersListState extends State<UsersList> {
                     image: AssetImage('assets/imageninicio/imageninicio.jpg'),
                   ),
                 ),
-                //trailing: ElevatedButton(
-                  //onPressed: () => Press(index), 
-                  //child: Text(''),
-                //),
               ),
-            );
+            ));
           }
         ),
       ),

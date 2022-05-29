@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'dart:async';
 import 'dart:math';
 
-class LineChartSample2 extends StatefulWidget {
+/*class LineChartSample2 extends StatefulWidget {
   final List<Color> availableColors = const [
     Colors.purpleAccent,
     Colors.yellow,
@@ -35,7 +34,7 @@ class _LineChartSample2State extends State<LineChartSample2> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return  Stack(
       children: <Widget>[
         AspectRatio(
           aspectRatio: 1.30,
@@ -614,4 +613,4 @@ class _LineChartSample2State extends State<LineChartSample2> {
       await refreshState();
     }
   }
-}
+}*/

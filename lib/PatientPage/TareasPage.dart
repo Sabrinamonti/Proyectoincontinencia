@@ -23,7 +23,7 @@ class _TareasTratamientosState extends State<TareasTratamientos> {
   fetchdatabaselist() async {
     dynamic resultant = await DatabaseManage().getTasks();
     if(resultant == null) {
-      print('No se puede obtener ls informacion');
+      print('No se puede obtener la informacion');
     } else {
       setState(() {
         tareaslista = resultant;

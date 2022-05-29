@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loginpage/MedicPage/homepageMed.dart';
 import 'package:loginpage/MedicPage/profileinfoMed.dart';
-import 'dart:ffi';
 
 class BottomBar extends StatefulWidget {
   const BottomBar({ Key? key }) : super(key: key);
