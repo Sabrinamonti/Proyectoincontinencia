@@ -1,616 +1,258 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-import 'dart:math';
+import 'package:get/get.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:loginpage/MedicPage/statcontroller.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-/*class LineChartSample2 extends StatefulWidget {
-  final List<Color> availableColors = const [
-    Colors.purpleAccent,
-    Colors.yellow,
-    Colors.lightBlue,
-    Colors.orange,
-    Colors.pink,
-    Colors.redAccent,
-  ];
-  const LineChartSample2({Key? key}) : super(key: key);
+
+class LineCharts extends StatefulWidget {
+  const LineCharts({ Key? key }) : super(key: key);
 
   @override
-  _LineChartSample2State createState() => _LineChartSample2State();
+  State<LineCharts> createState() => _LineChartsState();
 }
 
-class _LineChartSample2State extends State<LineChartSample2> {
-  List<Color> gradientColors = [
-    const Color(0xff23b6e6),
-    const Color(0xff02d39a),
-  ];
-
-  bool showAvg = false;
-
-  final Color barBackgroundColor = const Color(0xff72d8bf);
-  final Duration animDuration = const Duration(milliseconds: 250);
-
-  int touchedIndex = -1;
-
-  bool isPlaying = false;
-
+class _LineChartsState extends State<LineCharts> {
+  var statController = Get.put(StatController());
   @override
   Widget build(BuildContext context) {
-    return  Stack(
-      children: <Widget>[
-        AspectRatio(
-          aspectRatio: 1.30,
-          child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 10),
-            decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(18),
-                ),
-                color: Color(0xff232d37)),
-            child: Padding(
-              padding: const EdgeInsets.only(
-                  right: 18.0, left: 12.0, top: 60, bottom: 12),
-              child: LineChart(
-                showAvg ? avgData() : mainData(),
-              ),
-            ),
+    return Scaffold(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: _buildGraphStat(),
           ),
-        ),
-        SizedBox(
-          width: 230,
-          height: 80,
-          child: TextButton(
-            onPressed: () {
-              setState(() {
-                showAvg = !showAvg;
-              });
-            },
-            child:
-            Text(
-              'Valores Mensuales',
-              style: TextStyle(
-                  fontSize: 20,
-                  color:
-                      showAvg ? Colors.white.withOpacity(0.5) : Colors.white),
-            ),
-          ),
-        ),
-        Stack(
-          children: [
-            Card(
-              margin: EdgeInsets.fromLTRB(5, 320, 5, 10),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-        color: const Color(0xff81e5cd),
-        child: Stack(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  const Text(
-                    'Valores Semanales',
-                    style: TextStyle(
-                        color: Color(0xff0f4a3c),
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: BarChart(
-                        isPlaying ? randomData() : mainBarData(),
-                        swapAnimationDuration: animDuration,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          _pageIndicatorText(),
+          _previousWeekButton(),
+          _nextWeekButton(),
+        ],
+      )
+    );
+  }
+
+  Widget _buildGraphStat() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisAlignment: MainAxisAlignment.start,
+    children: [
+      _buildSectionTitle('Primera Seccion', 'unit'),
+      Obx(
+        () => _buildWeekIndicators(statController.dailyStatList1.call(),1)
       ),
-          ],
+      Padding(
+        padding: const EdgeInsets.only(top: 8),
+      ),
+    ],
+  );
+  }
+
+  Widget _pageIndicatorText() {
+    return Obx(()=> Align(
+      alignment: Alignment.bottomCenter,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            color: Colors.pink,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            child: Text(statController.currentWeek.value,
+            style: TextStyle(fontSize: 17, color: Colors.white),
+            ),
+          ),
         )
-      ],
+      )
+    ));
+  }
+
+  Widget _previousWeekButton() {
+    return Align(
+      alignment: Alignment.bottomLeft,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: RawMaterialButton(
+          onPressed: () {
+            statController.onPreviousWeek();
+          },
+          elevation: 2,
+          fillColor: Colors.pink,
+          child: Icon(Icons.arrow_back, color:Colors.white),
+          padding: EdgeInsets.all(8),
+          shape: CircleBorder(),
+        )
+      )
     );
   }
 
-  Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Color(0xff68737d),
-      fontWeight: FontWeight.bold,
-      fontSize: 16,
-    );
-    Widget text;
-    switch (value.toInt()) {
-      case 2:
-        text = const Text('MAR', style: style);
-        break;
-      case 5:
-        text = const Text('JUN', style: style);
-        break;
-      case 8:
-        text = const Text('SEP', style: style);
-        break;
-      default:
-        text = const Text('', style: style);
-        break;
-    }
-
-    return Padding(child: text, padding: const EdgeInsets.only(top: 8.0));
-  }
-
-  Widget leftTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Color(0xff67727d),
-      fontWeight: FontWeight.bold,
-      fontSize: 15,
-    );
-    String text;
-    switch (value.toInt()) {
-      case 1:
-        text = '10K';
-        break;
-      case 3:
-        text = '30k';
-        break;
-      case 5:
-        text = '50k';
-        break;
-      default:
-        return Container();
-    }
-
-    return Text(text, style: style, textAlign: TextAlign.left);
-  }
-
-  LineChartData mainData() {
-    return LineChartData(
-      gridData: FlGridData(
-        show: true,
-        drawVerticalLine: true,
-        horizontalInterval: 1,
-        verticalInterval: 1,
-        getDrawingHorizontalLine: (value) {
-          return FlLine(
-            color: const Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-        getDrawingVerticalLine: (value) {
-          return FlLine(
-            color: const Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-      ),
-      titlesData: FlTitlesData(
-        show: true,
-        rightTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
+  Widget _nextWeekButton() {
+    return Obx(() => Visibility(
+      visible: statController.displayNextWeekBtn.value,
+      child: Align(
+        alignment: Alignment.bottomRight,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: RawMaterialButton(
+            onPressed: () {
+              statController.onNextWeek();
+            },
+            elevation: 2,
+            fillColor: Colors.pink,
+            child: Icon(Icons.arrow_forward, color: Colors.white),
+            padding: EdgeInsets.all(8),
+            shape: CircleBorder(),
+          )
         ),
-        topTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 30,
-            interval: 1,
-            getTitlesWidget: bottomTitleWidgets,
-          ),
-        ),
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            interval: 1,
-            getTitlesWidget: leftTitleWidgets,
-            reservedSize: 42,
-          ),
-        ),
-      ),
-      borderData: FlBorderData(
-          show: true,
-          border: Border.all(color: const Color(0xff37434d), width: 1)),
-      minX: 0,
-      maxX: 11,
-      minY: 0,
-      maxY: 6,
-      lineBarsData: [
-        LineChartBarData(
-          spots: const [
-            FlSpot(0, 3),
-            FlSpot(2.6, 2),
-            FlSpot(4.9, 5),
-            FlSpot(6.8, 3.1),
-            FlSpot(8, 4),
-            FlSpot(9.5, 3),
-            FlSpot(11, 4),
-          ],
-          isCurved: true,
-          gradient: LinearGradient(
-            colors: gradientColors,
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
-          barWidth: 5,
-          isStrokeCapRound: true,
-          belowBarData: BarAreaData(
-            show: true,
-            gradient: LinearGradient(
-              colors: gradientColors
-                  .map((color) => color.withOpacity(0.3))
-                  .toList(),
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ),
-          ),
-        ),
-      ],
+      )
+      ) 
     );
   }
 
-  LineChartData avgData() {
-    return LineChartData(
-      gridData: FlGridData(
-        show: true,
-        drawHorizontalLine: true,
-        verticalInterval: 1,
-        horizontalInterval: 1,
-        getDrawingVerticalLine: (value) {
-          return FlLine(
-            color: const Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-        getDrawingHorizontalLine: (value) {
-          return FlLine(
-            color: const Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-      ),
-      titlesData: FlTitlesData(
-        show: true,
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 30,
-            getTitlesWidget: bottomTitleWidgets,
-            interval: 1,
+  Widget _buildSectionTitle(String title, String subTitle) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(title, style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold))
           ),
-        ),
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            getTitlesWidget: leftTitleWidgets,
-            reservedSize: 42,
-            interval: 1,
-          ),
-        ),
-        topTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        rightTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-      ),
-      borderData: FlBorderData(
-          show: true,
-          border: Border.all(color: const Color(0xff37434d), width: 1)),
-      minX: 0,
-      maxX: 11,
-      minY: 0,
-      maxY: 6,
-      lineBarsData: [
-        LineChartBarData(
-          spots: const [
-            FlSpot(0, 3.44),
-            FlSpot(2.6, 3.44),
-            FlSpot(4.9, 3.44),
-            FlSpot(6.8, 3.44),
-            FlSpot(8, 3.44),
-            FlSpot(9.5, 3.44),
-            FlSpot(11, 3.44),
-          ],
-          isCurved: true,
-          gradient: LinearGradient(
-            colors: [
-              ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                  .lerp(0.2)!,
-              ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                  .lerp(0.2)!,
+          Text(subTitle, style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold))
+        ],
+      )
+    );
+  }
+
+  Widget _buildWeekIndicators(List<DailyStatUiModel> models, int type){
+    if(models.length == 7) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: SizedBox(
+          height: 250,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildDayIndicator(models[0], type),
+              _buildDayIndicator(models[1], type),
+              _buildDayIndicator(models[2], type),
+              _buildDayIndicator(models[3], type),
+              _buildDayIndicator(models[4], type),
+              _buildDayIndicator(models[5], type),
+              _buildDayIndicator(models[6], type),
             ],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
-          barWidth: 5,
-          isStrokeCapRound: true,
-          dotData: FlDotData(
-            show: false,
-          ),
-          belowBarData: BarAreaData(
-            show: true,
-            gradient: LinearGradient(
-              colors: [
-                ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                    .lerp(0.2)!
-                    .withOpacity(0.1),
-                ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                    .lerp(0.2)!
-                    .withOpacity(0.1),
-              ],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ),
-          ),
-        ),
-      ],
-    );
+          )
+        )
+      );
+    } else {
+      return Container();
+    }
   }
 
-  BarChartGroupData makeGroupData(
-    int x,
-    double y, {
-    bool isTouched = false,
-    Color barColor = Colors.white,
-    double width = 22,
-    List<int> showTooltips = const [],
-  }) {
-    return BarChartGroupData(
-      x: x,
-      barRods: [
-        BarChartRodData(
-          toY: isTouched ? y + 1 : y,
-          color: isTouched ? Colors.yellow : barColor,
-          width: width,
-          borderSide: isTouched
-              ? BorderSide(color: Colors.yellow, width: 1)
-              : const BorderSide(color: Colors.white, width: 0),
-          backDrawRodData: BackgroundBarChartRodData(
-            show: true,
-            toY: 20,
-            color: barBackgroundColor,
-          ),
-        ),
-      ],
-      showingTooltipIndicators: showTooltips,
-    );
-  }
-
-  List<BarChartGroupData> showingGroups() => List.generate(7, (i) {
-        switch (i) {
-          case 0:
-            return makeGroupData(0, 5, isTouched: i == touchedIndex);
-          case 1:
-            return makeGroupData(1, 6.5, isTouched: i == touchedIndex);
-          case 2:
-            return makeGroupData(2, 5, isTouched: i == touchedIndex);
-          case 3:
-            return makeGroupData(3, 7.5, isTouched: i == touchedIndex);
-          case 4:
-            return makeGroupData(4, 9, isTouched: i == touchedIndex);
-          case 5:
-            return makeGroupData(5, 11.5, isTouched: i == touchedIndex);
-          case 6:
-            return makeGroupData(6, 6.5, isTouched: i == touchedIndex);
-          default:
-            return throw Error();
-        }
-      });
-
-  BarChartData mainBarData() {
-    return BarChartData(
-      barTouchData: BarTouchData(
-        touchTooltipData: BarTouchTooltipData(
-            tooltipBgColor: Colors.blueGrey,
-            getTooltipItem: (group, groupIndex, rod, rodIndex) {
-              String weekDay;
-              switch (group.x.toInt()) {
-                case 0:
-                  weekDay = 'Lunes';
-                  break;
-                case 1:
-                  weekDay = 'Martes';
-                  break;
-                case 2:
-                  weekDay = 'Miercoles';
-                  break;
-                case 3:
-                  weekDay = 'Jueves';
-                  break;
-                case 4:
-                  weekDay = 'Viernes';
-                  break;
-                case 5:
-                  weekDay = 'Sabado';
-                  break;
-                case 6:
-                  weekDay = 'Domingo';
-                  break;
-                default:
-                  throw Error();
-              }
-              return BarTooltipItem(
-                weekDay + '\n',
-                const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
+  Widget _buildDayIndicator(DailyStatUiModel model, int type) {
+    
+    return InkWell(
+      onTap: () => statController.setSelectedDayPosition(model.dayPosition, type),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 48, 
+            height: 24,
+            child: Visibility(
+              visible: model.isSelected,
+              child: DecoratedBox(
+                decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(8)),
                 ),
-                children: <TextSpan>[
-                  TextSpan(
-                    text: (rod.toY - 1).toString(),
-                    style: const TextStyle(
-                      color: Colors.yellow,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              );
-            }),
-        touchCallback: (FlTouchEvent event, barTouchResponse) {
-          setState(() {
-            if (!event.isInterestedForInteractions ||
-                barTouchResponse == null ||
-                barTouchResponse.spot == null) {
-              touchedIndex = -1;
-              return;
-            }
-            touchedIndex = barTouchResponse.spot!.touchedBarGroupIndex;
-          });
-        },
-      ),
-      titlesData: FlTitlesData(
-        show: true,
-        rightTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        topTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            getTitlesWidget: getTitles,
-            reservedSize: 38,
+                child: Center(child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: Text('${model.stat} uni', 
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold),
+                  )
+                ))
+              )
+            )
           ),
-        ),
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: false,
+          SizedBox(height: 4),
+          Expanded(
+            child: NeumorphicIndicator(
+              width: 25,
+              percent: statController.getStatPercentage(model.stat, type),
+            )
           ),
-        ),
-      ),
-      borderData: FlBorderData(
-        show: false,
-      ),
-      barGroups: showingGroups(),
-      gridData: FlGridData(show: false),
+          SizedBox(height: 8),
+          DecoratedBox(
+            decoration: _getDayDecoratedBox(model.isToday),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Text(model.day)
+            ),
+          )
+        ],
+      )
     );
   }
 
-  Widget getTitles(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Colors.white,
-      fontWeight: FontWeight.bold,
-      fontSize: 14,
-    );
-    Widget text;
-    switch (value.toInt()) {
-      case 0:
-        text = const Text('L', style: style);
-        break;
-      case 1:
-        text = const Text('M', style: style);
-        break;
-      case 2:
-        text = const Text('M', style: style);
-        break;
-      case 3:
-        text = const Text('J', style: style);
-        break;
-      case 4:
-        text = const Text('V', style: style);
-        break;
-      case 5:
-        text = const Text('S', style: style);
-        break;
-      case 6:
-        text = const Text('D', style: style);
-        break;
-      default:
-        text = const Text('', style: style);
-        break;
-    }
-    return Padding(padding: const EdgeInsets.only(top: 16), child: text);
-  }
-
-  BarChartData randomData() {
-    return BarChartData(
-      barTouchData: BarTouchData(
-        enabled: false,
-      ),
-      titlesData: FlTitlesData(
-        show: true,
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            getTitlesWidget: getTitles,
-            reservedSize: 38,
-          ),
-        ),
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: false,
-          ),
-        ),
-        topTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: false,
-          ),
-        ),
-        rightTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: false,
-          ),
-        ),
-      ),
-      borderData: FlBorderData(
-        show: false,
-      ),
-      barGroups: List.generate(7, (i) {
-        switch (i) {
-          case 0:
-            return makeGroupData(0, Random().nextInt(15).toDouble() + 6,
-                barColor: widget.availableColors[
-                    Random().nextInt(widget.availableColors.length)]);
-          case 1:
-            return makeGroupData(1, Random().nextInt(15).toDouble() + 6,
-                barColor: widget.availableColors[
-                    Random().nextInt(widget.availableColors.length)]);
-          case 2:
-            return makeGroupData(2, Random().nextInt(15).toDouble() + 6,
-                barColor: widget.availableColors[
-                    Random().nextInt(widget.availableColors.length)]);
-          case 3:
-            return makeGroupData(3, Random().nextInt(15).toDouble() + 6,
-                barColor: widget.availableColors[
-                    Random().nextInt(widget.availableColors.length)]);
-          case 4:
-            return makeGroupData(4, Random().nextInt(15).toDouble() + 6,
-                barColor: widget.availableColors[
-                    Random().nextInt(widget.availableColors.length)]);
-          case 5:
-            return makeGroupData(5, Random().nextInt(15).toDouble() + 6,
-                barColor: widget.availableColors[
-                    Random().nextInt(widget.availableColors.length)]);
-          case 6:
-            return makeGroupData(6, Random().nextInt(15).toDouble() + 6,
-                barColor: widget.availableColors[
-                    Random().nextInt(widget.availableColors.length)]);
-          default:
-            return throw Error();
-        }
-      }),
-      gridData: FlGridData(show: false),
-    );
-  }
-
-  Future<dynamic> refreshState() async {
-    setState(() {});
-    await Future<dynamic>.delayed(
-        animDuration + const Duration(milliseconds: 50));
-    if (isPlaying) {
-      await refreshState();
+  _getDayDecoratedBox(bool isToday) {
+    if(isToday) {
+      return BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(4)),
+        color: Colors.pink,
+      );
+    } else {
+      return BoxDecoration();
     }
   }
-}*/
+
+}
+
+const Color kDarkGrey = Color(0xff393b44);
+const Color kLightGrey = Color(0xff8d93ab);
+const Color kLightestGrey = Color(0xffd6e0f0);
+const Color kLightText = Color(0xfff1f3f8);
+const Color kDefaultTextColor = Color(0xFF30475E);
+const Color kAlphaTextColor = Color(0x3230475E);
+const Color kAlphaPrimary80 = Color(0xCC30475E);
+const Color kAccentColor = Color(0xFFF05454);
+const Color kIndicatorAccentColor = Color(0xFFFF4646);
+const Color kIndicatorAccentVariantColor = Color(0xFFFF8585);
+const Color kVariantColor = Color(0xFF222831);
+const Color kBaseColor = Color(0xFFE8E8E8);
+
+final ThemeData appThemeData = ThemeData(
+  primaryColor: kDefaultTextColor,
+  accentColor: kAccentColor,
+  splashColor: kLightestGrey,
+  highlightColor: kLightGrey,
+  scaffoldBackgroundColor: kBaseColor,
+  textTheme: _textTheme,
+  iconTheme: IconThemeData(
+    color: kDefaultTextColor,
+  ),
+);
+
+final _textTheme = GoogleFonts.kanitTextTheme(TextTheme(
+  headline1: TextStyle(
+      fontSize: 34, fontWeight: FontWeight.bold, color: kDefaultTextColor),
+  headline2: TextStyle(
+      fontSize: 28, fontWeight: FontWeight.bold, color: kDefaultTextColor),
+  headline3: TextStyle(
+      fontSize: 24, fontWeight: FontWeight.normal, color: kDefaultTextColor),
+  bodyText1: TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.normal,
+  ),
+));
+
+final neumorphicTheme = NeumorphicThemeData(
+    defaultTextColor: Color(0xFF30475E),
+    accentColor: Color(0xFFF05454),
+    variantColor: Color(0xFFFFA45B),
+    baseColor: Color(0xFFE8E8E8),
+    depth: 10,
+    intensity: 0.6,
+    lightSource: LightSource.topLeft);
+
+
+
+

@@ -61,8 +61,8 @@ class _TareasTratamientosState extends State<TareasTratamientos> {
               ),
               child: Card(
               child: ListTile(
-                title: Text(tareaslista[index]['Nombre'], style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                subtitle: Text(tareaslista[index]['Telefono']),
+                title: Text(tareaslista[index]['Titulo'], style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                subtitle: Text(tareaslista[index]['Desde'].toString()),
                 leading: Icon(Icons.task_alt),
                 onTap: (){},
               ),
@@ -75,7 +75,11 @@ class _TareasTratamientosState extends State<TareasTratamientos> {
 }
 
 class DatabaseManage {
-  final CollectionReference TareasList = FirebaseFirestore.instance.collection('Usuario');
+
+  //final DateTime _now = DateTime.now().millisecondsSinceEpoch;
+  //final DateTime _start = DateTime(_now.year, _now.month, _now.day, 0, 0);
+
+  final Query<Map<String, dynamic>> TareasList = FirebaseFirestore.instance.collection('Evento');
 
   Future getTasks () async {
     List tasks= [];

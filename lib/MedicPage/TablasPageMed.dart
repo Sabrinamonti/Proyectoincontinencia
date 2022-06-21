@@ -44,7 +44,7 @@ class _tablaspageMedState extends State<tablaspageMed> {
           ),
           body:  TabBarView(
             children:  [ 
-              CalendarEvents(),
+              LineCharts(),
               CalendarEvents(),
             ],
           ),

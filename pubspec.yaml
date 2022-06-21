@@ -44,6 +44,9 @@ dependencies:
   cloud_firestore:
   firebase_database: 
   provider: 
+  get: ^4.6.5
+  flutter_neumorphic: ^3.2.0
+  google_fonts: ^3.0.1
 
 dev_dependencies:
   flutter_test:

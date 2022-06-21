@@ -30,7 +30,8 @@ class _CalendarEventsState extends State<CalendarEvents> {
   }
 
   List _getEventsDelDia(DateTime date){
-    return eventosBD[date]??[];
+    //return eventosBD[date]??[];
+    return eventos;
   }
 
   fetchdatabaselist() async {
@@ -40,7 +41,7 @@ class _CalendarEventsState extends State<CalendarEvents> {
     } else {
       setState(() {
         eventos = resultant;
-        eventosBD = eventos as Map<DateTime, List>;
+        //eventosBD = eventos as Map<DateTime, List>;
       });
     }
   }
