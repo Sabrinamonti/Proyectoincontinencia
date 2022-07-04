@@ -5,7 +5,7 @@ import 'package:loginpage/backend/Userslistcode.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class UsersList extends StatefulWidget {
-  const UsersList({ Key? key }) : super(key: key);
+  const UsersList({Key? key}) : super(key: key);
 
   @override
   State<UsersList> createState() => _UsersListState();
@@ -14,8 +14,8 @@ class UsersList extends StatefulWidget {
 class _UsersListState extends State<UsersList> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController? _textEditingController = TextEditingController();
-  List usuarioslista=[];
-  List usersdata =[];
+  List usuarioslista = [];
+  List usersdata = [];
   List filterUsers = [];
 
   @override
@@ -26,8 +26,8 @@ class _UsersListState extends State<UsersList> {
 
   fetchdatabaselist() async {
     dynamic resultant = await DatabaseManagement().gerUsersList();
-    if(resultant == null) {
-      print('No se puede obtener ls informacion');
+    if (resultant == null) {
+      print('No se puede obtener la informacion');
     } else {
       setState(() {
         usersdata = resultant;
@@ -37,14 +37,19 @@ class _UsersListState extends State<UsersList> {
   }
 
   Future onSlide(int index) async {
-    final Datauser= _auth.currentUser;
-    final ets= usuarioslista[index]['Id'];
-    final patsid = FirebaseFirestore.instance.collection('Usuario').doc(Datauser?.uid);
+    final Datauser = _auth.currentUser;
+    final ets = usuarioslista[index]['Id'];
+    final patsid =
+        FirebaseFirestore.instance.collection('Usuario').doc(Datauser?.uid);
     final medsid = FirebaseFirestore.instance.collection('Usuario').doc(ets);
     setState(() {
-       usuarioslista.removeAt(index);
-       patsid.update({'PacsId' : FieldValue.arrayUnion([ets])}).then((value) => print("UsedAdded"));
-       medsid.update({'Profs': FieldValue.arrayUnion([Datauser?.uid])}).then((value) => print('MedAdded'));
+      usuarioslista.removeAt(index);
+      patsid.update({
+        'PacsId': FieldValue.arrayUnion([ets])
+      }).then((value) => print("UsedAdded"));
+      medsid.update({
+        'Profs': FieldValue.arrayUnion([Datauser?.uid])
+      }).then((value) => print('MedAdded'));
     });
   }
 
@@ -59,53 +64,58 @@ class _UsersListState extends State<UsersList> {
             borderRadius: BorderRadius.circular(25),
           ),
           child: TextField(
-            onChanged: (value){
+            onChanged: (value) {
               setState(() {
-                usuarioslista = usersdata.where((element) 
-                => element.toString().toLowerCase().contains(value.toLowerCase())).toList();
+                usuarioslista = usersdata
+                    .where((element) => element
+                        .toString()
+                        .toLowerCase()
+                        .contains(value.toLowerCase()))
+                    .toList();
               });
               print(usuarioslista);
-              print("cantidad de pacientes: " + usuarioslista.length.toString());
+              print(
+                  "cantidad de pacientes: " + usuarioslista.length.toString());
               filterUsers = usuarioslista;
             },
             controller: _textEditingController,
-            decoration: InputDecoration(
-              hintText: 'Buscar Paciente'
-            ),
+            decoration: InputDecoration(hintText: 'Buscar Paciente'),
           ),
         ),
       ),
       body: Container(
         child: ListView.builder(
-          itemCount: _textEditingController!.text.isNotEmpty ? usuarioslista.length : usersdata.length,
-          itemBuilder: (context, index) {
-            final item = usersdata[index];
-            return Slidable(
-              startActionPane: ActionPane(
-                motion: const ScrollMotion(),
-                children: [
-                  SlidableAction(
-                    onPressed: (context) => onSlide(index),
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
-                    icon: Icons.plus_one,
-                    label: 'Agregar',
-                  )
-                ],
-              ),
-              child: Card(
-              child: ListTile(
-                title: Text(usuarioslista[index]['Nombre']),
-                subtitle: Text(usuarioslista[index]['Telefono']),
-                leading: const CircleAvatar(
-                  child: Image(
-                    image: AssetImage('assets/imageninicio/imageninicio.jpg'),
+            itemCount: _textEditingController!.text.isNotEmpty
+                ? usuarioslista.length
+                : usersdata.length,
+            itemBuilder: (context, index) {
+              final item = usersdata[index];
+              return Slidable(
+                  startActionPane: ActionPane(
+                    motion: const ScrollMotion(),
+                    children: [
+                      SlidableAction(
+                        onPressed: (context) => onSlide(index),
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        icon: Icons.plus_one,
+                        label: 'Agregar',
+                      )
+                    ],
                   ),
-                ),
-              ),
-            ));
-          }
-        ),
+                  child: Card(
+                    child: ListTile(
+                      title: Text(usuarioslista[index]['Nombre']),
+                      subtitle: Text(usuarioslista[index]['Telefono']),
+                      leading: const CircleAvatar(
+                        child: Image(
+                          image: AssetImage(
+                              'assets/imageninicio/imageninicio.jpg'),
+                        ),
+                      ),
+                    ),
+                  ));
+            }),
       ),
     );
   }
