@@ -20,78 +20,93 @@ class _CreateeventState extends State<Createevent> {
   String titulo = '';
   String Descp = '';
   bool Cumplido = false;
-  late DateTime startdate = DateTime.now();
-  late DateTime enddate = DateTime(DateTime.now().year + 2);
+  DateTimeRange dateRange = DateTimeRange(
+      start: DateTime.now(), end: DateTime(DateTime.now().year + 2));
 
   @override
   Widget build(BuildContext context) {
+    DateTime startdate = dateRange.start;
+    DateTime enddate = dateRange.end;
+    final duration = dateRange.duration;
+
     return AlertDialog(
       title: const Text('Nueva Tarea'),
-      content: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Form(
-              key: _formkey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  TextFormField(
-                    decoration: InputDecoration(
-                      hintText: 'Titulo',
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: Colors.lightGreen, width: 1.5),
-                        borderRadius: BorderRadius.circular(10),
+      content: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Form(
+                key: _formkey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      decoration: InputDecoration(
+                        hintText: 'Titulo',
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                              color: Colors.lightGreen, width: 1.5),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                              color: Colors.lightGreen, width: 1.5),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: Colors.lightGreen, width: 1.5),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                      validator: (val) =>
+                          val!.isEmpty ? 'Ingrese Titulo' : null,
+                      onChanged: (val) => {titulo = val},
                     ),
-                    validator: (val) => val!.isEmpty ? 'Ingrese Titulo' : null,
-                    onChanged: (val) => {titulo = val},
-                  ),
-                  const SizedBox(height: 20.0),
-                  TextFormField(
-                    maxLines: 6,
-                    decoration: InputDecoration(
-                      hintText: 'Descripcion',
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: Colors.lightGreen, width: 1.5),
-                        borderRadius: BorderRadius.circular(10),
+                    const SizedBox(height: 20.0),
+                    TextFormField(
+                      maxLines: 6,
+                      decoration: InputDecoration(
+                        hintText: 'Descripcion',
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                              color: Colors.lightGreen, width: 1.5),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                              color: Colors.lightGreen, width: 1.5),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: Colors.lightGreen, width: 1.5),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                      validator: (val) =>
+                          val!.isEmpty ? 'Ingrese Descripcion de tarea' : null,
+                      onChanged: (val) => {Descp = val},
                     ),
-                    validator: (val) =>
-                        val!.isEmpty ? 'Ingrese Descripcion de tarea' : null,
-                    onChanged: (val) => {Descp = val},
-                  ),
-                ],
-              )),
-          const SizedBox(height: 20.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Expanded(
-                  child: buildDateField(
-                      text: toDate(startdate),
-                      onClicked: () => pickdatestart(PickDate: true),
-                      header: 'Desde')),
-              Expanded(
-                  child: buildDateField(
-                      text: toDate(enddate),
-                      onClicked: () => pickdatend(PickDate: true),
-                      header: 'Hasta')),
-            ],
-          ),
-        ],
+                  ],
+                )),
+            const SizedBox(height: 20.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                    child: ElevatedButton(
+                  onPressed: () => pickDateTime(),
+                  child: const Text("Escoger Fechas"),
+                  style: ElevatedButton.styleFrom(
+                      primary: Color.fromARGB(255, 75, 131, 11)),
+                )),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Expanded(
+                    child: buildDateField(
+                        text: toDate(startdate), header: 'Desde')),
+                Expanded(
+                    child:
+                        buildDateField(text: toDate(enddate), header: 'Hasta')),
+              ],
+            ),
+          ],
+        ),
       ),
       actions: [
         TextButton(
@@ -102,16 +117,34 @@ class _CreateeventState extends State<Createevent> {
           onPressed: () async {
             //_formkey.currentState?.save();
             if (_formkey.currentState!.validate()) {
-              Map<String, dynamic> res = {
-                'id': 'Pacientesopa',
+              CollectionReference ref =
+                  await FirebaseFirestore.instance.collection('Evento');
+              String docId = ref.doc().id;
+              await ref.doc(docId).set({
+                'id': 'Pacientes',
                 'titulo': titulo,
                 'descripcion': Descp,
                 'eventDate': startdate.millisecondsSinceEpoch,
                 'cumplido': Cumplido,
-              };
-              final data = res;
-              await eventDBS.create(data);
-              print(data);
+                'idEvento': docId
+              });
+              final a = duration.inDays;
+              for (var i = 0; i < a; i++) {
+                final A = DateTime(
+                    startdate.year, startdate.month, startdate.day + 1);
+                CollectionReference refs =
+                    await FirebaseFirestore.instance.collection('Evento');
+                String docsId = refs.doc().id;
+                await ref.doc(docsId).set({
+                  'id': 'Pacientes',
+                  'titulo': titulo,
+                  'descripcion': Descp,
+                  'eventDate': A.millisecondsSinceEpoch,
+                  'cumplido': Cumplido,
+                  'idEvento': docsId
+                });
+                startdate = A;
+              }
               Navigator.pop(context);
               return;
             }
@@ -130,7 +163,6 @@ class _CreateeventState extends State<Createevent> {
 
   Widget buildDateField({
     required String text,
-    required VoidCallback onClicked,
     required String header,
   }) =>
       Column(
@@ -142,45 +174,22 @@ class _CreateeventState extends State<Createevent> {
           ),
           ListTile(
             title: Text(text),
-            trailing: Icon(Icons.arrow_drop_down),
-            onTap: onClicked,
           ),
         ],
       );
-  Future pickdatestart({required bool PickDate}) async {
-    final date = await pickDateTime(startdate, pickdate: PickDate);
-    if (date != null) {
-      setState(() {
-        startdate = date;
-      });
-    }
-    print(startdate);
-  }
 
-  Future pickdatend({required bool PickDate}) async {
-    final date = await pickDateTime(startdate, pickdate: PickDate);
-    if (date != null) {
-      setState(() {
-        enddate = date;
-      });
-    }
-    print(enddate);
-  }
+  Future<DateTime?> pickDateTime() async {
+    DateTimeRange? date = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(
+          DateTime.now().year + 2, DateTime.now().month, DateTime.now().day),
+    );
 
-  Future<DateTime?> pickDateTime(DateTime initialDate,
-      {required bool pickdate, DateTime? firstdate}) async {
-    if (pickdate) {
-      final date = await showDatePicker(
-        context: context,
-        initialDate: initialDate,
-        firstDate: firstdate ?? DateTime.now(),
-        lastDate: DateTime(
-            DateTime.now().year + 2, DateTime.now().month, DateTime.now().day),
-      );
+    if (date == null) return null;
 
-      if (date == null) return null;
-
-      return date;
-    }
+    setState(() {
+      dateRange = date;
+    });
   }
 }

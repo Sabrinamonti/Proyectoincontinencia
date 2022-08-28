@@ -1,5 +1,7 @@
 import 'dart:collection';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:loginpage/MedicPage/CreateEventPage.dart';
 import 'package:loginpage/backend/BackendCalendario/event.dart';
 import 'package:loginpage/backend/BackendCalendario/event_firebase.dart';
@@ -43,16 +45,6 @@ class _CalendarEventsState extends State<CalendarEvents> {
         EventosDB = resultant;
       });
     }
-    //print(EventosDB[0]["descripcion"]);
-    //EventosDB.forEach((element) {
-    //EventModel evento = EventModel(
-    //  id: element["id"],
-    // title: element["title"],
-    //description: element["description"],
-    // eventDate: element["eventDate"],
-    // cumplido: element["cumplido"]);
-    //print(evento);
-    //});
   }
 
   List<dynamic> _getEventsForDay(DateTime dateTime) {
@@ -114,7 +106,8 @@ class _CalendarEventsState extends State<CalendarEvents> {
                     // height between the date rows, default is 52.0
                     rowHeight: 60.0,
                     // this property needs to be added if we want to show events
-                    //eventLoader: _getEventsForDay,
+                    eventLoader: _getEventsForDay,
+                    locale: 'es_ES',
                     // Calendar Header Styling
                     headerStyle: const HeaderStyle(
                       titleTextStyle: TextStyle(
@@ -176,7 +169,6 @@ class _CalendarEventsState extends State<CalendarEvents> {
                   )),
               Builder(builder: (BuildContext context) {
                 fetchdatabaselist();
-                print("Imprimendo lista......");
                 _groupEvents(EventosDB);
                 DateTime selectedDate = _selectedDay;
                 final _selectedEvents = _groupedEvents[selectedDate] ?? [];
@@ -186,13 +178,48 @@ class _CalendarEventsState extends State<CalendarEvents> {
                       shrinkWrap: true,
                       itemCount: _selectedEvents.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return ListTile(
-                          leading: const Icon(
-                            Icons.done,
-                            color: Colors.lightGreen,
+                        return Slidable(
+                          startActionPane: ActionPane(
+                            motion: const ScrollMotion(),
+                            children: [
+                              SlidableAction(
+                                onPressed: (context) async {
+                                  //final fin = _selectedEvents[index];
+                                  //final eliminar = FirebaseFirestore.instance
+                                  //.collection('Evento')
+                                  //.doc(fin);
+                                  setState(() {
+                                    print("Hola amgos");
+                                    _selectedEvents.removeAt(index);
+                                  });
+                                },
+                                backgroundColor: Colors.red,
+                                icon: Icons.cancel,
+                                label: 'Eliminar Tarea',
+                              )
+                            ],
                           ),
-                          title: Text(_selectedEvents[index]["titulo"]),
-                          subtitle: Text(_selectedEvents[index]["descripcion"]),
+                          child: ListTile(
+                            leading: _selectedEvents[index]['cumplido'] == false
+                                ? const Icon(Icons.cancel, color: Colors.red)
+                                : const Icon(
+                                    Icons.done,
+                                    color: Colors.green,
+                                  ),
+                            title: Text(_selectedEvents[index]["titulo"]),
+                            subtitle:
+                                Text(_selectedEvents[index]["descripcion"]),
+                            trailing: IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const Createevent()));
+                              },
+                            ),
+                          ),
                         );
                       },
                     ),

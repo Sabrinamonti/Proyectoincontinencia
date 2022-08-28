@@ -10,12 +10,14 @@ class EventModel {
   final String description;
   final DateTime eventDate;
   final bool cumplido;
+  final String userEvent;
   EventModel({
     required this.id,
     required this.title,
     required this.description,
     required this.eventDate,
     required this.cumplido,
+    required this.userEvent,
   });
 
   EventModel copyWith({
@@ -24,6 +26,7 @@ class EventModel {
     String? description,
     DateTime? eventDate,
     bool? cumplido,
+    String? userEvent,
   }) {
     return EventModel(
       id: id ?? this.id,
@@ -31,6 +34,7 @@ class EventModel {
       description: description ?? this.description,
       eventDate: eventDate ?? this.eventDate,
       cumplido: cumplido ?? this.cumplido,
+      userEvent: userEvent ?? this.userEvent,
     );
   }
 
@@ -41,6 +45,7 @@ class EventModel {
       'description': description,
       'eventDate': eventDate.millisecondsSinceEpoch,
       'cumplido': cumplido,
+      'userEvent': userEvent,
     };
   }
 
@@ -51,6 +56,7 @@ class EventModel {
       description: map['description'] as String,
       eventDate: DateTime.fromMillisecondsSinceEpoch(map['eventDate'] as int),
       cumplido: map['cumplido'] as bool,
+      userEvent: map['userEvent'] as String,
     );
   }
 
@@ -61,6 +67,7 @@ class EventModel {
       description: map['description'] as String,
       eventDate: DateTime.fromMillisecondsSinceEpoch(map['eventDate'] as int),
       cumplido: map['cumplido'] as bool,
+      userEvent: map['userEvent'] as String,
     );
   }
 
@@ -71,7 +78,7 @@ class EventModel {
 
   @override
   String toString() {
-    return 'EventModel(id: $id, title: $title, description: $description, eventDate: $eventDate, cumplido: $cumplido)';
+    return 'EventModel(id: $id, title: $title, description: $description, eventDate: $eventDate, cumplido: $cumplido, userEvent: $userEvent)';
   }
 
   @override
@@ -83,7 +90,8 @@ class EventModel {
         other.title == title &&
         other.description == description &&
         other.eventDate == eventDate &&
-        other.cumplido == cumplido;
+        other.cumplido == cumplido &&
+        other.userEvent == userEvent;
   }
 
   @override
@@ -92,6 +100,7 @@ class EventModel {
         title.hashCode ^
         description.hashCode ^
         eventDate.hashCode ^
-        cumplido.hashCode;
+        cumplido.hashCode ^
+        userEvent.hashCode;
   }
 }

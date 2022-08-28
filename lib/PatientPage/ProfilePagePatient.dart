@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:loginpage/PatientPage/EditProfilePatientPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfilePatient extends StatefulWidget {
-  const ProfilePatient({ Key? key }) : super(key: key);
+  const ProfilePatient({Key? key}) : super(key: key);
 
   @override
   State<ProfilePatient> createState() => _ProfilePatientState();
@@ -23,9 +25,9 @@ class _ProfilePatientState extends State<ProfilePatient> {
 
   @override
   Widget build(BuildContext context) {
-
-  final Datauser= auth.currentUser;
-  final CollectionReference InfoPat = FirebaseFirestore.instance.collection('Usuario');
+    final Datauser = auth.currentUser;
+    final CollectionReference InfoPat =
+        FirebaseFirestore.instance.collection('Usuario');
 
     return Scaffold(
       body: Column(
@@ -37,88 +39,119 @@ class _ProfilePatientState extends State<ProfilePatient> {
           const Center(
             child: Padding(
               padding: EdgeInsets.only(bottom: 20),
-              child: Text('Perfil', 
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700, color: Color.fromRGBO(64, 105, 225, 1))),
+              child: Text('Perfil',
+                  style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.w700,
+                      color: Color.fromRGBO(64, 105, 225, 1))),
             ),
           ),
           InkWell(
-            onTap:() {
-
-            },
+            onTap: () {},
             child: DisplayImage(
               imagePath: 'Assets/imageninicio/imageninicio.jpg',
-              onPressed: () { print("el usuario es:" + inputData()); },
+              onPressed: () {
+                print("el usuario es:" + inputData());
+              },
             ),
           ),
+          SizedBox(
+            height: 20,
+          ),
+          Divider(),
           FutureBuilder(
-            future: InfoPat.doc(Datauser?.uid).get(),
-            builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-              if(snapshot.connectionState == ConnectionState.done) {
-                Map<String , dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
-                return buildUserInfoDisplay(data['Nombre'], 'Nombre Completo', EditNameFormPage());
-              }
-              return Text('Loading');
-            }
+              future: InfoPat.doc(Datauser?.uid).get(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<DocumentSnapshot> snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  Map<String, dynamic> data =
+                      snapshot.data!.data() as Map<String, dynamic>;
+                  return buildUserInfoDisplay(
+                      data['Nombre'], 'Nombre Completo', EditNameFormPage());
+                }
+                return Text('Loading');
+              }),
+          SizedBox(
+            height: 15,
           ),
           FutureBuilder(
-            future: InfoPat.doc(Datauser?.uid).get(),
-            builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-              if(snapshot.connectionState == ConnectionState.done) {
-                Map<String , dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
-                return buildUserInfoDisplay(data['Telefono'], 'Telefono', EditNameFormPage());
-              }
-              return Text('Loading');
-            }
+              future: InfoPat.doc(Datauser?.uid).get(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<DocumentSnapshot> snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  Map<String, dynamic> data =
+                      snapshot.data!.data() as Map<String, dynamic>;
+                  return buildUserInfoDisplay(
+                      data['Telefono'], 'Telefono', EditPhoneFormPage());
+                }
+                return Text('Loading');
+              }),
+          SizedBox(
+            height: 15,
           ),
           FutureBuilder(
-            future: InfoPat.doc(Datauser?.uid).get(),
-            builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-              if(snapshot.connectionState == ConnectionState.done) {
-                Map<String , dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
-                return buildUserInfoDisplay(data['Email'], 'Email', EditNameFormPage());
-              }
-              return Text('Loading');
-            }
-          ),
+              future: InfoPat.doc(Datauser?.uid).get(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<DocumentSnapshot> snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  Map<String, dynamic> data =
+                      snapshot.data!.data() as Map<String, dynamic>;
+                  return buildUserInfoDisplay(
+                      data['Email'], 'Email', EditEmailFormPage());
+                }
+                return Text('Loading');
+              }),
         ],
       ),
-      
     );
   }
 
   Widget buildUserInfoDisplay(String getValue, String title, Widget editPage) =>
-
-  Padding(
-    padding: const EdgeInsets.only(bottom: 10),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: const TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w500,
-          color: Colors.grey,
-        )),
-        const SizedBox(height: 2),
-        Container(
-          width: 350,
-          height: 40,
-          decoration: const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
+      Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey,
+                )),
+            const SizedBox(height: 2),
+            Container(
+              width: 350,
+              height: 40,
+              decoration: const BoxDecoration(
+                  border: Border(
+                      bottom: BorderSide(
                 color: Colors.grey,
                 width: 1,
-              )
+              ))),
+              child: Row(
+                children: [
+                  Expanded(
+                      child: TextButton(
+                    onPressed: () {
+                      navigateSecondPage(editPage);
+                    },
+                    child: Text(getValue,
+                        style: const TextStyle(fontSize: 16, height: 1.4)),
+                  )),
+                  Icon(Icons.keyboard_arrow_right, color: Colors.grey, size: 40)
+                ],
+              ),
             )
-          ),
-          child: Row(children: [
-            Expanded(child: TextButton(
-              onPressed: (){print("el usuario es:" + inputData());},
-              child: Text(getValue, style: const TextStyle(fontSize: 16, height: 1.4)),
-            )),
-            Icon(Icons.keyboard_arrow_right, color: Colors.grey,size: 40)
-          ],),
-        )
-      ],
-    ),
-  );
+          ],
+        ),
+      );
+
+  void navigateSecondPage(Widget editForm) {
+    Route route = MaterialPageRoute(builder: (context) => editForm);
+    Navigator.push(context, route).then(onGoBack);
+  }
+
+  FutureOr onGoBack(dynamic value) {
+    setState(() {});
+  }
 }
