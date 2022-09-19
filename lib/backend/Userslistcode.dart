@@ -11,10 +11,14 @@ class DatabaseManagement {
     DocumentSnapshot snapshot = await documents.doc(currentuser?.uid).get();
     var data = snapshot.data() as Map;
     var idpats = data['PacsId'] as List<dynamic>;
+    List ids = [];
+    idpats.forEach((element) {
+      ids.add(element);
+    });
 
     Query<Map<String, dynamic>> userslist = FirebaseFirestore.instance
         .collection('Usuario')
-        .where("TipoUsuario", isEqualTo: "Paciente");
+        .where('TipoUsuario', isEqualTo: "Paciente");
 
     for (int i = 0; i < idpats.length; i++) {
       userslist = userslist.where('Id', isNotEqualTo: idpats[i]);

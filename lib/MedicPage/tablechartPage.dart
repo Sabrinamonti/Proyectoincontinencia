@@ -11,7 +11,8 @@ import 'package:intl/intl.dart';
 import 'package:firebase_helpers/firebase_helpers.dart';
 
 class CalendarEvents extends StatefulWidget {
-  const CalendarEvents({Key? key}) : super(key: key);
+  final String value;
+  const CalendarEvents({Key? key, required this.value}) : super(key: key);
 
   @override
   State<CalendarEvents> createState() => _CalendarEventsState();
@@ -37,7 +38,7 @@ class _CalendarEventsState extends State<CalendarEvents> {
   }
 
   fetchdatabaselist() async {
-    dynamic resultant = await CalendarioMed().getEvents();
+    dynamic resultant = await CalendarioMed(value: widget.value).getEvents();
     if (resultant == null) {
       print('No se puede obtener la informacion');
     } else {
@@ -70,8 +71,10 @@ class _CalendarEventsState extends State<CalendarEvents> {
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButton: FloatingActionButton.extended(
-          onPressed: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const Createevent())),
+          onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Createevent(value: widget.value))),
           label: const Text('Agregar Evento'),
         ),
         body: SingleChildScrollView(
@@ -215,8 +218,9 @@ class _CalendarEventsState extends State<CalendarEvents> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) =>
-                                            const Createevent()));
+                                        builder: (context) => Createevent(
+                                              value: widget.value,
+                                            )));
                               },
                             ),
                           ),

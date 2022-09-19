@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loginpage/MedicPage/homepageMed.dart';
 import 'package:loginpage/MedicPage/tablechartPage.dart';
 import 'package:intl/intl.dart';
 import 'package:loginpage/backend/BackendCalendario/event.dart';
@@ -8,7 +9,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:loginpage/MedicPage/tablechartPage.dart';
 
 class Createevent extends StatefulWidget {
-  const Createevent({Key? key}) : super(key: key);
+  final String value;
+  const Createevent({Key? key, required this.value}) : super(key: key);
 
   @override
   State<Createevent> createState() => _CreateeventState();
@@ -136,7 +138,7 @@ class _CreateeventState extends State<Createevent> {
                     await FirebaseFirestore.instance.collection('Evento');
                 String docsId = refs.doc().id;
                 await ref.doc(docsId).set({
-                  'id': 'Pacientes',
+                  'id': widget.value,
                   'titulo': titulo,
                   'descripcion': Descp,
                   'eventDate': A.millisecondsSinceEpoch,

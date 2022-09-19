@@ -1,10 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loginpage/PatientPage/EjerciciosPage.dart';
 import 'package:loginpage/PatientPage/ProfilePagePatient.dart';
 import 'package:loginpage/PatientPage/TareasPage.dart';
+import 'package:loginpage/loginPage.dart';
 
 class TabBarPaciente extends StatefulWidget {
-  const TabBarPaciente({ Key? key }) : super(key: key);
+  const TabBarPaciente({Key? key}) : super(key: key);
 
   @override
   State<TabBarPaciente> createState() => _TabBarPacienteState();
@@ -20,11 +22,13 @@ class _TabBarPacienteState extends State<TabBarPaciente> {
           appBar: AppBar(
             title: const Text('Bienvenido'),
             automaticallyImplyLeading: false,
-            backgroundColor: Color.fromARGB(255, 8, 229, 119),
+            backgroundColor: Color.fromARGB(255, 58, 112, 86),
             leading: IconButton(
               icon: Icon(Icons.logout),
-              onPressed: (){
-
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LoginPage()));
               },
             ),
             bottom: const TabBar(tabs: [
@@ -33,13 +37,11 @@ class _TabBarPacienteState extends State<TabBarPaciente> {
               Tab(text: 'Perfil', icon: Icon(Icons.account_circle)),
             ]),
           ),
-          body: const TabBarView(
-            children: [
-              Ejerciciospage(),
-              TareasTratamientos(),
-              ProfilePatient(),
-            ]
-          ),
+          body: const TabBarView(children: [
+            Ejerciciospage(),
+            TareasTratamientos(),
+            ProfilePatient(),
+          ]),
         ),
       ),
     );

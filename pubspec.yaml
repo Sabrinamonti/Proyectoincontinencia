@@ -52,6 +52,7 @@ dependencies:
 
   flutter_localizations: 
     sdk: flutter
+  mqtt_client: ^9.6.8
   
 dev_dependencies:
   flutter_test:
@@ -79,6 +80,9 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
      - assets/imageninicio/imageninicio.jpg
+     - assets/certs/AmazonRootCA1.pem
+     - assets/certs/DeviceCertificate.crt
+     - assets/certs/Private.key 
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

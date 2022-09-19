@@ -1,15 +1,36 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:loginpage/PatientPage/Ejercicio2/Ejercicio2.dart';
+import 'package:loginpage/PatientPage/Ejercicio3/Ejercicio3.dart';
+import 'package:loginpage/PatientPage/mqttrecibir.dart';
 
-class CalibrarEsp extends StatefulWidget {
-  const CalibrarEsp({Key? key}) : super(key: key);
+class CalibrarEspEj3 extends StatefulWidget {
+  const CalibrarEspEj3({Key? key}) : super(key: key);
 
   @override
-  State<CalibrarEsp> createState() => _CalibrarEspState();
+  State<CalibrarEspEj3> createState() => _CalibrarEspEj3State();
 }
 
-class _CalibrarEspState extends State<CalibrarEsp> {
-  Tween<double> _scaleTween = Tween<double>(begin: 1, end: 4);
+class _CalibrarEspEj3State extends State<CalibrarEspEj3>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  Tween<double> _tween = Tween(begin: 0.75, end: 2);
+  bool showbutton = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.delayed(Duration(seconds: 10), () {
+      setState(() {
+        showbutton = true;
+      });
+    });
+    _controller =
+        AnimationController(vsync: this, duration: const Duration(seconds: 2));
+    _controller.repeat(reverse: true);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +38,7 @@ class _CalibrarEspState extends State<CalibrarEsp> {
         backgroundColor: Colors.black,
         title: Text('Calibracion'),
       ),
-      backgroundColor: Color.fromARGB(255, 248, 177, 245),
+      backgroundColor: Color.fromARGB(255, 168, 216, 129),
       body: Container(
         alignment: Alignment.center,
         child: Stack(alignment: Alignment.center, children: [
@@ -40,12 +61,6 @@ class _CalibrarEspState extends State<CalibrarEsp> {
                       DefaultTextStyle(
                           style: TextStyle(fontSize: 20, color: Colors.black),
                           child: AnimatedTextKit(
-                              onFinished: () {
-                                ElevatedButton(
-                                  onPressed: () {},
-                                  child: Text('Inicair ejercicio'),
-                                );
-                              },
                               repeatForever: false,
                               totalRepeatCount: 1,
                               animatedTexts: [
@@ -54,9 +69,6 @@ class _CalibrarEspState extends State<CalibrarEsp> {
                                 RotateAnimatedText('Relaje el area pelvica',
                                     duration: Duration(seconds: 60)),
                               ])),
-                      SizedBox(
-                        height: 400,
-                      ),
                     ],
                   ),
                 ),
@@ -64,31 +76,32 @@ class _CalibrarEspState extends State<CalibrarEsp> {
             ),
           ),
           Positioned(
-              top: 230,
+              top: 300,
               child: Container(
                 child: Center(
-                  child: TweenAnimationBuilder(
-                    tween: _scaleTween,
-                    duration: Duration(seconds: 180),
-                    curve: Curves.bounceOut,
-                    builder: (context, double _scale, child) {
-                      return Transform.scale(
-                        scale: _scale,
-                        child: child,
-                      );
-                    },
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      color: Colors.lightBlue[200],
-                      child: Text(
-                        'Tomando datos',
-                        style: Theme.of(context).textTheme.headline5,
-                      ),
-                    ),
+                    child: ScaleTransition(
+                  scale: _tween.animate(CurvedAnimation(
+                      parent: _controller, curve: Curves.bounceInOut)),
+                  child: Icon(
+                    Icons.circle,
+                    size: 100,
+                    color: Colors.green,
                   ),
-                ),
-              ))
+                )),
+              )),
+          showbutton
+              ? Positioned(
+                  bottom: 180,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MqttClientEsp()));
+                    },
+                    child: Text('Iniciar ejercicio'),
+                  ))
+              : Container(),
         ]),
       ),
     );

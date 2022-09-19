@@ -1,9 +1,9 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
-import 'package:loginpage/PatientPage/Calibrarejer1.dart';
+import 'package:loginpage/PatientPage/Ejercicio2/Calibrarejer2.dart';
+import 'package:loginpage/PatientPage/Ejercicio3/Calibrarejer3.dart';
 
-class inicioEjer1 extends StatelessWidget {
-  const inicioEjer1({Key? key}) : super(key: key);
+class inicioEjer3 extends StatelessWidget {
+  const inicioEjer3({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -108,8 +108,10 @@ class inicioEjer1 extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const CalibrarEsp()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const CalibrarEspEj3()));
             },
             child: Text('Iniciar Calibración'),
           )
