@@ -21,8 +21,8 @@ class ThermometerWidget extends StatelessWidget {
       this.indicatorBulbWidth = 30.0,
       this.indicatorStemWidth = 7.0,
       this.temperature = 60.0,
-      this.width = 20.0,
-      this.height = 100.0}) {
+      this.width = 60.0,
+      this.height = 180.0}) {
     assert(height > width, 'height must be greater than width');
     assert(stemWidth < width, 'stemWidth must be less than to width');
   }
@@ -164,7 +164,7 @@ class ThermometerWidgetPainter extends CustomPainter {
   void drawGraduations(Canvas canvas, Size size) {
     canvas.save();
     canvas.translate(inset + stemWidth, size.height - size.width);
-    int markPoint = 0;
+    double markPoint = 0;
     for (int i = 1; i <= 5; i++) {
       canvas.drawLine(
           Offset.zero, Offset(graduationTickLength, 0.0), borderPaint);
@@ -173,7 +173,7 @@ class ThermometerWidgetPainter extends CustomPainter {
       textStyle = TextStyle(
           color: borderColor,
           fontFamily: 'Calibri',
-          fontSize: indicatorBulbWidth / 3);
+          fontSize: indicatorBulbWidth / 2);
       textPainter.text = TextSpan(
         text: '$markPoint°',
         style: textStyle,
@@ -182,7 +182,7 @@ class ThermometerWidgetPainter extends CustomPainter {
       textPainter.paint(canvas, Offset(0.0, -(textPainter.height / 2)));
       canvas.restore();
       canvas.translate(0.0, -0.25 * (maxTempHeight - size.width));
-      markPoint += 25;
+      markPoint += (80 / 4);
     }
     canvas.restore();
   }

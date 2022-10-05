@@ -1,27 +1,26 @@
 import 'dart:math';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:loginpage/backend/CodeEjercicio1.dart';
 
-
-class StatController extends GetxController{
+/*class StatController extends GetxController {
   RxString todayStat = "".obs;
   RxString currentWeek = "".obs;
 
   RxList<DailyStatUiModel> dailyStatList1 = (List<DailyStatUiModel>.of([])).obs;
-  
+
   RxBool displayNextWeekBtn = false.obs;
 
-  int maxSection1 = -1;
+  double maxSection1 = -1;
 
   DateTime selectedDate = DateTime.now();
   DateTime currentDate = DateTime.now();
 
-   @override
+  @override
   void onInit() {
     setCurrentWeek();
-    super.onInit();
   }
 
   void resetMaxValue() {
@@ -61,11 +60,14 @@ class StatController extends GetxController{
     var daysInWeek = AppDateUtils.getDaysInWeek(dateTime);
 
     List<DailyStatUiModel> section1Stat = List.filled(7, defaultDailyStat);
-
     var today = DateTime.now();
+    //String formatted = DateFormat.yMd().format(today);
     var todayPosition = DateTime.now().weekday - 1;
+    double valordia = 10;
+    dynamic resultant = await fechaval().Getvals();
 
     for (var i = 0; i <= 6; i++) {
+      //List itemslist = [10, 37, 28, 56, 19, 47, 67];
       var date = daysInWeek[i];
       var randomStat1 = randomInt(100);
       section1Stat[i] = DailyStatUiModel(
@@ -83,8 +85,8 @@ class StatController extends GetxController{
     }
   }
 
-  int randomInt(int max) {
-    return Random().nextInt(100) + 1;
+  double randomInt(double max) {
+    return Random().nextInt(100).toDouble() + 1;
   }
 
   void setSelectedDayPosition(int position, int sectionNumber) {
@@ -107,7 +109,7 @@ class StatController extends GetxController{
         .toList();
   }
 
-  double getStatPercentage(int time, int type) {
+  double getStatPercentage(double time, int type) {
     switch (type) {
       case 1:
         {
@@ -118,7 +120,7 @@ class StatController extends GetxController{
     }
   }
 
-  double getSection1StatPercentage(int time) {
+  double getSection1StatPercentage(double time) {
     if (time == 0) {
       return 0;
     } else {
@@ -165,7 +167,6 @@ extension DateExtension on DateTime {
   }
 }
 
-
 var defaultDailyStat = DailyStatUiModel(
   day: 'day',
   stat: 0,
@@ -176,7 +177,7 @@ var defaultDailyStat = DailyStatUiModel(
 
 class DailyStatUiModel {
   String day;
-  int stat;
+  double stat;
   bool isToday;
   bool isSelected;
   int dayPosition;
@@ -190,7 +191,7 @@ class DailyStatUiModel {
 
   DailyStatUiModel copyWith(
           {String? day,
-          int? stat,
+          double? stat,
           bool? isToday,
           bool? isSelected,
           int? dayPosition}) =>
@@ -200,4 +201,4 @@ class DailyStatUiModel {
           isToday: isToday ?? this.isToday,
           isSelected: isSelected ?? this.isSelected,
           dayPosition: dayPosition ?? this.dayPosition);
-}
+}*/

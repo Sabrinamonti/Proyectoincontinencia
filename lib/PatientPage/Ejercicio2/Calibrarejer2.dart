@@ -1,6 +1,8 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:loginpage/PatientPage/Ejercicio2/Ejercicio2.dart';
 
 class CalibrarEspEj2 extends StatefulWidget {
@@ -20,7 +22,7 @@ class _CalibrarEspEj2State extends State<CalibrarEspEj2>
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(Duration(seconds: 10), () {
+    Future.delayed(Duration(seconds: 30), () {
       setState(() {
         showbutton = true;
       });
@@ -64,9 +66,9 @@ class _CalibrarEspEj2State extends State<CalibrarEspEj2>
                               totalRepeatCount: 1,
                               animatedTexts: [
                                 RotateAnimatedText('Presione el area pelvica',
-                                    duration: Duration(seconds: 60)),
+                                    duration: Duration(seconds: 15)),
                                 RotateAnimatedText('Relaje el area pelvica',
-                                    duration: Duration(seconds: 60)),
+                                    duration: Duration(seconds: 15)),
                               ])),
                     ],
                   ),
@@ -93,40 +95,57 @@ class _CalibrarEspEj2State extends State<CalibrarEspEj2>
                   bottom: 180,
                   child: ElevatedButton(
                     onPressed: () async {
+                      final FirebaseAuth _auth = FirebaseAuth.instance;
+                      final currentuser = _auth.currentUser;
+                      final DateTime now = DateTime.now();
+                      final String formatter = DateFormat.yMd().format(now);
+
                       final DocmentStream = FirebaseFirestore.instance
                           .collection('sensor')
-                          .doc('calibrar')
+                          .doc(currentuser?.uid)
+                          .collection('calibrar')
+                          .doc('sensor')
                           .collection('data')
+                          .where('fechamax', isEqualTo: formatter)
                           .orderBy('emg', descending: true)
                           .limit(1)
                           .get()
                           .then((value) {
                         value.docs.forEach((element) async {
+                          print('Se logro entrar al bd');
                           DocumentReference anadevalmax =
                               await FirebaseFirestore.instance
                                   .collection('sensor')
-                                  .doc('calibrar')
+                                  .doc(currentuser?.uid)
+                                  .collection('calibrar')
+                                  .doc('sensor')
                                   .collection('valormax')
-                                  .add({'emg': element.data()['emg']});
-                          print(element.data()['emg']);
+                                  .add({
+                            'emg': element.data()['emg'],
+                            'fecha': element.data()['fecha'],
+                          });
                         });
                       });
                       DocumentReference docsRef = FirebaseFirestore.instance
                           .collection('sensor')
-                          .doc('calibrar');
+                          .doc(currentuser?.uid)
+                          .collection('calibrar')
+                          .doc('sensor');
                       docsRef.update({
                         'STATUS': 'OFF',
                       });
                       DocumentReference valejer1 = FirebaseFirestore.instance
                           .collection('sensor')
-                          .doc('Ejercicio1');
+                          .doc(currentuser?.uid)
+                          .collection('Ejercicio')
+                          .doc('sensor');
                       valejer1.update({
                         'STATUS': 'ON',
                       });
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Ejercicio2()));
+                        context,
+                      MaterialPageRoute(
+                        builder: (context) => Ejercicio2()));
                     },
                     child: Text('Iniciar ejercicio'),
                   ))

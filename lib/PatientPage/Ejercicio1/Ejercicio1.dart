@@ -3,13 +3,8 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:loginpage/PatientPage/Ejercicio1/thermometropage.dart';
 import 'package:loginpage/PatientPage/Homepagepatient.dart';
-import 'package:loginpage/backend/CodeEjercicio1.dart';
-import 'package:mqtt_client/mqtt_client.dart' as mqtt;
-import 'package:mqtt_client/mqtt_client.dart';
-import 'package:mqtt_client/mqtt_server_client.dart';
 
 class Ejercicio1 extends StatefulWidget {
   const Ejercicio1({Key? key}) : super(key: key);
@@ -20,13 +15,13 @@ class Ejercicio1 extends StatefulWidget {
 
 class _Ejercicio1State extends State<Ejercicio1> {
   bool showbutton = false;
-  late double _temp = 10.54;
+  late double _temp = 0.10;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(Duration(seconds: 10), () {
+    Future.delayed(Duration(seconds: 40), () {
       setState(() {
         showbutton = true;
       });
@@ -88,13 +83,17 @@ class _Ejercicio1State extends State<Ejercicio1> {
                         height: 420,
                         width: 90,
                         child: Builder(builder: (BuildContext context) {
+                          final FirebaseAuth _auth = FirebaseAuth.instance;
+                          final currentuser = _auth.currentUser;
                           final documentStream = FirebaseFirestore.instance
                               .collection('sensor')
+                              .doc(currentuser?.uid)
+                              .collection('Ejercicio')
                               .snapshots()
                               .listen((event) {
                             event.docs.forEach((element) {
                               setState(() {
-                                _temp = element.data()['valorej1'];
+                                _temp = element.data()['valorej'];
                               });
                             });
                           });
@@ -103,6 +102,7 @@ class _Ejercicio1State extends State<Ejercicio1> {
                             innerColor: Colors.green,
                             indicatorColor: Colors.red,
                             temperature: _temp,
+                            height: 80,
                           );
                         }))),
                 showbutton
@@ -110,9 +110,14 @@ class _Ejercicio1State extends State<Ejercicio1> {
                         bottom: 70,
                         child: ElevatedButton(
                           onPressed: () async {
+                            final FirebaseAuth _auth = FirebaseAuth.instance;
+                            final currentuser = _auth.currentUser;
+
                             final DocmentStream = FirebaseFirestore.instance
                                 .collection('sensor')
-                                .doc('Ejercicio1')
+                                .doc(currentuser?.uid)
+                                .collection('Ejercicio')
+                                .doc('sensor')
                                 .collection('data')
                                 .orderBy('emg', descending: true)
                                 .limit(1)
@@ -122,16 +127,22 @@ class _Ejercicio1State extends State<Ejercicio1> {
                                 DocumentReference anadevalmax =
                                     await FirebaseFirestore.instance
                                         .collection('sensor')
-                                        .doc('Ejercicio1')
-                                        .collection('valormaxej1')
-                                        .add({'emg': element.data()['emg']});
-                                print(element.data()['emg']);
+                                        .doc(currentuser?.uid)
+                                        .collection('Ejercicio')
+                                        .doc('sensor')
+                                        .collection('valormax')
+                                        .add({
+                                  'emg': element.data()['emg'],
+                                  'fecha': element.data()['fecha']
+                                });
                               });
                             });
                             DocumentReference stopej1 = FirebaseFirestore
                                 .instance
                                 .collection('sensor')
-                                .doc('Ejercicio1');
+                                .doc(currentuser?.uid)
+                                .collection('Ejercicio')
+                                .doc('sensor');
                             stopej1.update({
                               'STATUS': 'OFF',
                             });

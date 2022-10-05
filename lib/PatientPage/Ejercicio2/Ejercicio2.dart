@@ -1,6 +1,8 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:loginpage/PatientPage/Homepagepatient.dart';
 
 class Ejercicio2 extends StatefulWidget {
@@ -12,17 +14,19 @@ class Ejercicio2 extends StatefulWidget {
 
 class _Ejercicio2State extends State<Ejercicio2> {
   bool showbutton = false;
-  double progress = 0;
+  late double progress = 0;
+  late double valormax = 1;
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  late final currentuser = _auth.currentUser;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(Duration(seconds: 10), () {
+    Future.delayed(Duration(seconds: 30), () {
       setState(() {
         showbutton = true;
-
-        //progress= valor / valor maximo;
       });
     });
   }
@@ -83,16 +87,36 @@ class _Ejercicio2State extends State<Ejercicio2> {
                         width: 250,
                         child: Stack(fit: StackFit.expand, children: [
                           Builder(builder: (BuildContext context) {
+                            final DateTime now = DateTime.now();
+                            final String formatter =
+                                DateFormat.yMd().format(now);
+                            final valmax = FirebaseFirestore.instance
+                                .collection('sensor')
+                                .doc(currentuser?.uid)
+                                .collection('calibrar')
+                                .doc('sensor')
+                                .collection('valormax')
+                                .where('fechamax', isEqualTo: "10/01/2022")
+                                .get()
+                                .then((value) => {
+                                      value.docs.forEach((element) {
+                                        setState(() {
+                                          valormax = element.data()['emg'];
+                                        });
+                                      })
+                                    });
+
                             final documentStream = FirebaseFirestore.instance
                                 .collection('sensor')
+                                .doc(currentuser?.uid)
+                                .collection('Ejercicio')
                                 .snapshots()
                                 .listen((event) {
                               event.docs.forEach((element) {
                                 setState(() {
-                                  progress = element.data()['valorej1'];
-                                  //double progmax =
-                                  //  element.data()['valormaxej1'];
-                                  progress = (progress / 100) / (56 / 100);
+                                  progress = element.data()['valorej'];
+                                  progress =
+                                      (progress / 100) / (valormax / 100);
                                 });
                               });
                             });
@@ -110,11 +134,17 @@ class _Ejercicio2State extends State<Ejercicio2> {
                         bottom: 70,
                         child: ElevatedButton(
                           onPressed: () {
+                            final DateTime now = DateTime.now();
+                            final String formatter =
+                                DateFormat.yMd().format(now);
                             final DocmentStream = FirebaseFirestore.instance
                                 .collection('sensor')
-                                .doc('Ejercicio1')
+                                .doc(currentuser?.uid)
+                                .collection('Ejercicio')
+                                .doc('sensor')
                                 .collection('data')
                                 .orderBy('emg', descending: true)
+                                .where('fechamax', isEqualTo: formatter)
                                 .limit(1)
                                 .get()
                                 .then((value) {
@@ -122,16 +152,22 @@ class _Ejercicio2State extends State<Ejercicio2> {
                                 DocumentReference anadevalmax =
                                     await FirebaseFirestore.instance
                                         .collection('sensor')
-                                        .doc('Ejercicio1')
-                                        .collection('valormaxej1')
-                                        .add({'emg': element.data()['emg']});
-                                print(element.data()['emg']);
+                                        .doc(currentuser?.uid)
+                                        .collection('Ejercicio')
+                                        .doc('sensor')
+                                        .collection('valormax')
+                                        .add({
+                                  'emg': element.data()['emg'],
+                                  'fecha': element.data()['fecha']
+                                });
                               });
                             });
                             DocumentReference stopej1 = FirebaseFirestore
                                 .instance
                                 .collection('sensor')
-                                .doc('Ejercicio1');
+                                .doc(currentuser?.uid)
+                                .collection('Ejercicio')
+                                .doc('sensor');
                             stopej1.update({
                               'STATUS': 'OFF',
                             });

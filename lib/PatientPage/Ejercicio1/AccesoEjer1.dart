@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loginpage/PatientPage/Ejercicio1/Calibrarejer1.dart';
 
@@ -95,7 +96,7 @@ class inicioEjer1 extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
                   Text(
-                    'A continuacion presione el boton para comemzar con la calibracón',
+                    'A continuacion presione el boton para comenzar con la calibracón',
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -108,9 +109,13 @@ class inicioEjer1 extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
+              final FirebaseAuth _auth = FirebaseAuth.instance;
+              final currentuser = _auth.currentUser;
               DocumentReference docsRef = FirebaseFirestore.instance
                   .collection('sensor')
-                  .doc('calibrar');
+                  .doc(currentuser?.uid)
+                  .collection('calibrar')
+                  .doc('sensor');
               docsRef.update({
                 'STATUS': 'ON',
               });

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loginpage/MedicPage/BottombarMedic.dart';
+import 'package:loginpage/MedicPage/LineBar.dart';
 import 'package:loginpage/MedicPage/LinechartsPage.dart';
 import 'package:loginpage/MedicPage/homepageMed.dart';
 import 'package:loginpage/MedicPage/tablechartPage.dart';

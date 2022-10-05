@@ -1,6 +1,9 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:loginpage/PatientPage/Ejercicio1/thermometropage.dart';
+import 'package:intl/intl.dart';
+import 'package:loginpage/PatientPage/Homepagepatient.dart';
 
 class Ejercicio3 extends StatefulWidget {
   const Ejercicio3({Key? key}) : super(key: key);
@@ -15,6 +18,7 @@ class _Ejercicio3State extends State<Ejercicio3>
   late Animation _animation;
   bool showbutton = false;
   double valor = 0;
+  double valormax = 0;
   bool cambioimagen = false;
 
   @override
@@ -86,27 +90,108 @@ class _Ejercicio3State extends State<Ejercicio3>
                     ),
                   ),
                 ),
-                cambioimagen
-                    ? Positioned(
-                        top: 120,
-                        child:
-                            SizedBox(height: 420, width: 90, child: Center()))
-                    : Positioned(
-                        top: 120,
-                        child: SizedBox(
-                          height: 420,
-                          width: 90,
-                          child: Center(),
-                        )),
+                Positioned(
+                  top: 120,
+                  child: Builder(builder: (BuildContext context) {
+                    final DateTime now = DateTime.now();
+                    final String formatter = DateFormat.yMd().format(now);
+                    final FirebaseAuth _auth = FirebaseAuth.instance;
+                    final currentuser = _auth.currentUser;
+                    final valmax = FirebaseFirestore.instance
+                        .collection('sensor')
+                        .doc(currentuser?.uid)
+                        .collection('calibrar')
+                        .doc('sensor')
+                        .collection('valormax')
+                        .where('fechamax', isEqualTo: formatter)
+                        .get()
+                        .then((value) => {
+                              value.docs.forEach((element) {
+                                setState(() {
+                                  valormax = element.data()['emg'];
+                                });
+                              })
+                            });
+                    final DocsSens = FirebaseFirestore.instance
+                        .collection('sensor')
+                        .doc(currentuser?.uid)
+                        .collection('Ejercicio')
+                        .snapshots()
+                        .listen((event) {
+                      event.docs.forEach((element) {
+                        setState(() {
+                          valor = element.data()['valorej'];
+                          valor = (valor / 100) / (valormax / 100);
+                        });
+                      });
+                    });
+                    return Container(
+                      alignment: Alignment.center,
+                      height: 300,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        image: DecorationImage(
+                            image: AssetImage(
+                                'assets/imageninicio/imagenrosaabierta.jpg')),
+                        color: Color.fromARGB(255, 37, 36, 36),
+                      ),
+                      child: AnimatedOpacity(
+                        duration: Duration(milliseconds: 700),
+                        opacity: valor,
+                        child: Image.asset(
+                            "assets/imageninicio/imagenrosacerrada.jpg"),
+                      ),
+                    );
+                  }),
+                ),
                 showbutton
                     ? Positioned(
                         bottom: 70,
                         child: ElevatedButton(
                           onPressed: () {
+                            final DateTime now = DateTime.now();
+                            final String formatter =
+                                DateFormat.yMd().format(now);
+                            final FirebaseAuth _auth = FirebaseAuth.instance;
+                            final currentuser = _auth.currentUser;
+                            final DocmentStream = FirebaseFirestore.instance
+                                .collection('sensor')
+                                .doc(currentuser?.uid)
+                                .collection('Ejercicio')
+                                .doc('sensor')
+                                .collection('data')
+                                .orderBy('emg', descending: true)
+                                .where('fechamax', isEqualTo: formatter)
+                                .limit(1)
+                                .get()
+                                .then((value) {
+                              value.docs.forEach((element) async {
+                                DocumentReference anadevalmax =
+                                    await FirebaseFirestore.instance
+                                        .collection('sensor')
+                                        .doc(currentuser?.uid)
+                                        .collection('Ejercicio')
+                                        .doc('sensor')
+                                        .collection('valormax')
+                                        .add({
+                                  'emg': element.data()['emg'],
+                                  'fecha': element.data()['fecha']
+                                });
+                              });
+                            });
+                            DocumentReference stopej1 = FirebaseFirestore
+                                .instance
+                                .collection('sensor')
+                                .doc(currentuser?.uid)
+                                .collection('Ejercicio')
+                                .doc('sensor');
+                            stopej1.update({
+                              'STATUS': 'OFF',
+                            });
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Ejercicio3()));
+                                    builder: (context) => TabBarPaciente()));
                           },
                           child: Text('Finalizar'),
                         ))

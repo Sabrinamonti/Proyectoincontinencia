@@ -1,12 +1,9 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart';
-import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loginpage/PatientPage/Ejercicio1/Ejercicio1.dart';
-import 'package:mqtt_client/mqtt_client.dart' as mqtt;
 
 class CalibrarEsp extends StatefulWidget {
   const CalibrarEsp({Key? key}) : super(key: key);
@@ -17,11 +14,6 @@ class CalibrarEsp extends StatefulWidget {
 
 class _CalibrarEspState extends State<CalibrarEsp>
     with SingleTickerProviderStateMixin {
-  late mqtt.MqttClient client;
-  late mqtt.MqttConnectionState connectionState;
-  double _temp = 20;
-  late StreamSubscription subscription;
-
   late AnimationController _controller;
   Tween<double> _tween = Tween(begin: 0.75, end: 2);
   bool showbutton = false;
@@ -103,9 +95,13 @@ class _CalibrarEspState extends State<CalibrarEsp>
                   bottom: 180,
                   child: ElevatedButton(
                     onPressed: () async {
+                      final FirebaseAuth _auth = FirebaseAuth.instance;
+                      final currentuser = _auth.currentUser;
                       final DocmentStream = FirebaseFirestore.instance
                           .collection('sensor')
-                          .doc('calibrar')
+                          .doc(currentuser?.uid)
+                          .collection('calibrar')
+                          .doc('sensor')
                           .collection('data')
                           .orderBy('emg', descending: true)
                           .limit(1)
@@ -115,21 +111,29 @@ class _CalibrarEspState extends State<CalibrarEsp>
                           DocumentReference anadevalmax =
                               await FirebaseFirestore.instance
                                   .collection('sensor')
-                                  .doc('calibrar')
+                                  .doc(currentuser?.uid)
+                                  .collection('calibrar')
+                                  .doc('sensor')
                                   .collection('valormax')
-                                  .add({'emg': element.data()['emg']});
-                          print(element.data()['emg']);
+                                  .add({
+                            'emg': element.data()['emg'],
+                            'fecha': element.data()['fecha']
+                          });
                         });
                       });
                       DocumentReference docsRef = FirebaseFirestore.instance
                           .collection('sensor')
-                          .doc('calibrar');
+                          .doc(currentuser?.uid)
+                          .collection('calibrar')
+                          .doc('sensor');
                       docsRef.update({
                         'STATUS': 'OFF',
                       });
                       DocumentReference valejer1 = FirebaseFirestore.instance
                           .collection('sensor')
-                          .doc('Ejercicio1');
+                          .doc(currentuser?.uid)
+                          .collection('Ejercicio')
+                          .doc('sensor');
                       valejer1.update({
                         'STATUS': 'ON',
                       });

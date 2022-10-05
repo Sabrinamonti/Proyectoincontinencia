@@ -1,244 +1,137 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fl_chart/fl_chart.dart' as charts;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:intl/intl.dart';
+import 'package:loginpage/MedicPage/LineBar.dart';
 import 'package:loginpage/MedicPage/statcontroller.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:loginpage/backend/CodeEjercicio1.dart';
+import 'package:collection/collection.dart';
 
 class LineCharts extends StatefulWidget {
   final String value;
-  const LineCharts({Key? key, required this.value}) : super(key: key);
+  const LineCharts({
+    Key? key,
+    required this.value,
+  }) : super(key: key);
 
   @override
   State<LineCharts> createState() => _LineChartsState();
 }
 
 class _LineChartsState extends State<LineCharts> {
-  var statController = Get.put(StatController());
+  final fromDate = DateTime(2022, 09, 22);
+  final toDate = DateTime.now();
+  List usersdata = [];
+  List itemslist = [];
+
+  Future Getvals() async {
+    Query<Map<String, dynamic>> dayslist = FirebaseFirestore.instance
+        .collection('sensor')
+        .doc('lHLQ1EncUCX8aNYsUXnS7HpKv963')
+        .collection('Ejercicio')
+        .doc('sensor')
+        .collection('valormax');
+    //for (int i = 0; i <= 30; i++) {
+    var today =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    String formatted = DateFormat.yMd().format(today);
+    dayslist = dayslist.where('fecha', isEqualTo: "9/29/2022");
+    //}
+    try {
+      await dayslist.get().then((value) => {
+            value.docs.forEach((element) {
+              itemslist.add(element.data());
+            })
+          });
+      return itemslist;
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  List<Datapoints> get _data {
+    final data = <double>[2, 4, 6, 8, 10];
+    return data
+        .mapIndexed(
+            (index, element) => Datapoints(val: index.toDouble(), dia: element))
+        .toList();
+  }
+
+  _generatedata() {
+    var lineData = [
+      //Datapoints(val: 34.8, dia: "Lunes"),
+      //Datapoints(val: 54.2, dia: "Martes"),
+      //Datapoints(val: 98.45, dia: "Miercoles"),
+      //Datapoints(val: 35.12, dia: "Jueves"),
+      //Datapoints(val: 64.75, dia: "Viernes"),
+    ];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchdatabaselist();
+    _generatedata();
+  }
+
+  fetchdatabaselist() async {
+    dynamic resultant = await fechaval().Getvals();
+    if (resultant == null) {
+      print('No se puede obtener la informacion');
+    } else {
+      setState(() {
+        //usersdata = resultant;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    List x = [1, 2, 3, 4, 5, 6, 7];
+    List y = [2, 4, 6, 8, 10, 12, 14];
     return Scaffold(
-        body: Stack(
-      children: [
-        SingleChildScrollView(
-          child: _buildGraphStat(),
+        body: Container(
+            child: PageView(
+      children: <Widget>[
+        Text("Se mostraran las tablas"),
+        SizedBox(
+          height: 10,
         ),
-        _pageIndicatorText(),
-        _previousWeekButton(),
-        _nextWeekButton(),
+        Container(
+            child: charts.LineChart(
+          charts.LineChartData(
+              minX: 0,
+              maxX: 11,
+              minY: 0,
+              maxY: 5,
+              lineBarsData: [
+                charts.LineChartBarData(spots: [
+                  charts.FlSpot(0, 3),
+                  charts.FlSpot(2.6, 6),
+                  charts.FlSpot(3.2, 2.5),
+                  charts.FlSpot(4.3, 4),
+                  charts.FlSpot(5, 1),
+                ])
+              ]),
+        ))
       ],
-    ));
-  }
-
-  Widget _buildGraphStat() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        _buildSectionTitle('Primera Seccion', 'unit'),
-        Obx(() =>
-            _buildWeekIndicators(statController.dailyStatList1.call(), 1)),
-        Padding(
-          padding: const EdgeInsets.only(top: 8),
-        ),
-      ],
-    );
-  }
-
-  Widget _pageIndicatorText() {
-    return Obx(() => Align(
-        alignment: Alignment.bottomCenter,
-        child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(8)),
-                color: Colors.pink,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                child: Text(
-                  statController.currentWeek.value,
-                  style: TextStyle(fontSize: 17, color: Colors.white),
-                ),
-              ),
-            ))));
-  }
-
-  Widget _previousWeekButton() {
-    return Align(
-        alignment: Alignment.bottomLeft,
-        child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: RawMaterialButton(
-              onPressed: () {
-                statController.onPreviousWeek();
-              },
-              elevation: 2,
-              fillColor: Colors.pink,
-              child: Icon(Icons.arrow_back, color: Colors.white),
-              padding: EdgeInsets.all(8),
-              shape: CircleBorder(),
-            )));
-  }
-
-  Widget _nextWeekButton() {
-    return Obx(() => Visibility(
-        visible: statController.displayNextWeekBtn.value,
-        child: Align(
-          alignment: Alignment.bottomRight,
-          child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: RawMaterialButton(
-                onPressed: () {
-                  statController.onNextWeek();
-                },
-                elevation: 2,
-                fillColor: Colors.pink,
-                child: Icon(Icons.arrow_forward, color: Colors.white),
-                padding: EdgeInsets.all(8),
-                shape: CircleBorder(),
-              )),
-        )));
-  }
-
-  Widget _buildSectionTitle(String title, String subTitle) {
-    return Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Expanded(
-                child: Text(title,
-                    style:
-                        TextStyle(fontSize: 23, fontWeight: FontWeight.bold))),
-            Text(subTitle,
-                style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold))
-          ],
-        ));
-  }
-
-  Widget _buildWeekIndicators(List<DailyStatUiModel> models, int type) {
-    if (models.length == 7) {
-      return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: SizedBox(
-              height: 250,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildDayIndicator(models[0], type),
-                  _buildDayIndicator(models[1], type),
-                  _buildDayIndicator(models[2], type),
-                  _buildDayIndicator(models[3], type),
-                  _buildDayIndicator(models[4], type),
-                  _buildDayIndicator(models[5], type),
-                  _buildDayIndicator(models[6], type),
-                ],
-              )));
-    } else {
-      return Container();
-    }
-  }
-
-  Widget _buildDayIndicator(DailyStatUiModel model, int type) {
-    return InkWell(
-        onTap: () =>
-            statController.setSelectedDayPosition(model.dayPosition, type),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-                width: 48,
-                height: 24,
-                child: Visibility(
-                    visible: model.isSelected,
-                    child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                        ),
-                        child: Center(
-                            child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 2),
-                                child: Text(
-                                  '${model.stat} uni',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
-                                )))))),
-            SizedBox(height: 4),
-            Expanded(
-                child: NeumorphicIndicator(
-              width: 25,
-              percent: statController.getStatPercentage(model.stat, type),
-            )),
-            SizedBox(height: 8),
-            DecoratedBox(
-              decoration: _getDayDecoratedBox(model.isToday),
-              child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: Text(model.day)),
-            )
-          ],
-        ));
-  }
-
-  _getDayDecoratedBox(bool isToday) {
-    if (isToday) {
-      return BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(4)),
-        color: Colors.pink,
-      );
-    } else {
-      return BoxDecoration();
-    }
+    )));
   }
 }
 
-const Color kDarkGrey = Color(0xff393b44);
-const Color kLightGrey = Color(0xff8d93ab);
-const Color kLightestGrey = Color(0xffd6e0f0);
-const Color kLightText = Color(0xfff1f3f8);
-const Color kDefaultTextColor = Color(0xFF30475E);
-const Color kAlphaTextColor = Color(0x3230475E);
-const Color kAlphaPrimary80 = Color(0xCC30475E);
-const Color kAccentColor = Color(0xFFF05454);
-const Color kIndicatorAccentColor = Color(0xFFFF4646);
-const Color kIndicatorAccentVariantColor = Color(0xFFFF8585);
-const Color kVariantColor = Color(0xFF222831);
-const Color kBaseColor = Color(0xFFE8E8E8);
+class Datapoints {
+  double val;
+  double dia;
+  Datapoints({required this.val, required this.dia});
 
-final ThemeData appThemeData = ThemeData(
-  primaryColor: kDefaultTextColor,
-  accentColor: kAccentColor,
-  splashColor: kLightestGrey,
-  highlightColor: kLightGrey,
-  scaffoldBackgroundColor: kBaseColor,
-  textTheme: _textTheme,
-  iconTheme: IconThemeData(
-    color: kDefaultTextColor,
-  ),
-);
+  /*Datapoints.fromMap(Map<String, dynamic> map)
+      : assert(map['val'] != null),
+        assert(map['dia'] != null),
+        val = map['val'],
+        dia = map['dia'];
 
-final _textTheme = GoogleFonts.kanitTextTheme(TextTheme(
-  headline1: TextStyle(
-      fontSize: 34, fontWeight: FontWeight.bold, color: kDefaultTextColor),
-  headline2: TextStyle(
-      fontSize: 28, fontWeight: FontWeight.bold, color: kDefaultTextColor),
-  headline3: TextStyle(
-      fontSize: 24, fontWeight: FontWeight.normal, color: kDefaultTextColor),
-  bodyText1: TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.normal,
-  ),
-));
-
-final neumorphicTheme = NeumorphicThemeData(
-    defaultTextColor: Color(0xFF30475E),
-    accentColor: Color(0xFFF05454),
-    variantColor: Color(0xFFFFA45B),
-    baseColor: Color(0xFFE8E8E8),
-    depth: 10,
-    intensity: 0.6,
-    lightSource: LightSource.topLeft);
+  @override
+  String toString() => "Record<$val:$dia>";*/
+}
