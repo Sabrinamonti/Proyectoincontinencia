@@ -89,7 +89,7 @@ class _SignupPageState extends State<SignupPage> {
                                       Icons.person,
                                       color: Colors.blueGrey,
                                     ),
-                                    hintText: 'Ingrese Nombre de usuario'),
+                                    hintText: 'Ingrese Nombre Completo'),
                                 validator: (val) =>
                                     val!.isEmpty ? 'Ingrese nombre' : null,
                                 onChanged: (val) {
@@ -145,7 +145,7 @@ class _SignupPageState extends State<SignupPage> {
                                 padding:
                                     const EdgeInsets.only(top: 1, bottom: 5),
                                 child: Text(
-                                  'Email',
+                                  'Nombre de usuario',
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                               ),
@@ -153,9 +153,10 @@ class _SignupPageState extends State<SignupPage> {
                                 decoration: const InputDecoration(
                                     icon: Icon(Icons.email,
                                         color: Colors.blueGrey),
-                                    hintText: 'Ingrese su Correo Electronico'),
-                                validator: (val) =>
-                                    val!.isEmpty ? 'Ingrese email' : null,
+                                    hintText: 'Ingrese su Nombre de usuario'),
+                                validator: (val) => val!.isEmpty
+                                    ? 'Ingrese nombre de usuario'
+                                    : null,
                                 onChanged: (val) {
                                   email = val;
                                 },
@@ -342,7 +343,7 @@ class _SignupPageState extends State<SignupPage> {
                                             'Email': email,
                                             'Contrasena': password,
                                             'TipoUsuario': tipoUsuario,
-                                            'PacsId': []
+                                            'PacsId': ["prueba"]
                                           })
                                         });
                                 ScaffoldMessenger.of(context)

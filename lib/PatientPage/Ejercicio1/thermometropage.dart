@@ -175,14 +175,14 @@ class ThermometerWidgetPainter extends CustomPainter {
           fontFamily: 'Calibri',
           fontSize: indicatorBulbWidth / 2);
       textPainter.text = TextSpan(
-        text: '$markPoint°',
+        text: '$markPoint',
         style: textStyle,
       );
       textPainter.layout();
       textPainter.paint(canvas, Offset(0.0, -(textPainter.height / 2)));
       canvas.restore();
       canvas.translate(0.0, -0.25 * (maxTempHeight - size.width));
-      markPoint += (80 / 4);
+      markPoint += 25;
     }
     canvas.restore();
   }

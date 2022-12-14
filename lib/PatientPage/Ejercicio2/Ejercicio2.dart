@@ -24,7 +24,7 @@ class _Ejercicio2State extends State<Ejercicio2> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(Duration(seconds: 30), () {
+    Future.delayed(Duration(seconds: 600), () {
       setState(() {
         showbutton = true;
       });
@@ -66,13 +66,13 @@ class _Ejercicio2State extends State<Ejercicio2> {
                                     fontWeight: FontWeight.bold),
                                 child: AnimatedTextKit(
                                     repeatForever: false,
-                                    totalRepeatCount: 3,
+                                    totalRepeatCount: 20,
                                     animatedTexts: [
                                       FadeAnimatedText(
                                           'Presione el area pelvica',
-                                          duration: Duration(seconds: 20)),
+                                          duration: Duration(seconds: 15)),
                                       FadeAnimatedText('Relaje el area pelvica',
-                                          duration: Duration(seconds: 20)),
+                                          duration: Duration(seconds: 15)),
                                     ])),
                           ],
                         ),
@@ -96,7 +96,8 @@ class _Ejercicio2State extends State<Ejercicio2> {
                                 .collection('calibrar')
                                 .doc('sensor')
                                 .collection('valormax')
-                                .where('fechamax', isEqualTo: "10/01/2022")
+                                .limit(1)
+                                .where('fecha', isEqualTo: formatter)
                                 .get()
                                 .then((value) => {
                                       value.docs.forEach((element) {
@@ -114,9 +115,9 @@ class _Ejercicio2State extends State<Ejercicio2> {
                                 .listen((event) {
                               event.docs.forEach((element) {
                                 setState(() {
-                                  progress = element.data()['valorej'];
+                                  progress = element.data()['valor'];
                                   progress =
-                                      (progress / 100) / (valormax / 100);
+                                      (progress / 1024) / (valormax / 1024);
                                 });
                               });
                             });
@@ -145,6 +146,7 @@ class _Ejercicio2State extends State<Ejercicio2> {
                                 .collection('data')
                                 .orderBy('emg', descending: true)
                                 .where('fechamax', isEqualTo: formatter)
+                                .where('emg', isNotEqualTo: 1024)
                                 .limit(1)
                                 .get()
                                 .then((value) {
@@ -158,7 +160,7 @@ class _Ejercicio2State extends State<Ejercicio2> {
                                         .collection('valormax')
                                         .add({
                                   'emg': element.data()['emg'],
-                                  'fecha': element.data()['fecha']
+                                  'fecha': element.data()['fechamax']
                                 });
                               });
                             });

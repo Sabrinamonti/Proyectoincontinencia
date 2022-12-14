@@ -2,17 +2,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class EditNameFormPage extends StatefulWidget {
-  const EditNameFormPage({Key? key}) : super(key: key);
+class EditName extends StatefulWidget {
+  final String value;
+  const EditName({Key? key, required this.value}) : super(key: key);
 
   @override
-  State<EditNameFormPage> createState() => _EditNameFormPageState();
+  State<EditName> createState() => _EditNameState();
 }
 
-class _EditNameFormPageState extends State<EditNameFormPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+class _EditNameState extends State<EditName> {
   final _formKey = GlobalKey<FormState>();
   final NombreController = TextEditingController();
+  late String iduser = widget.value;
 
   @override
   void dispose() {
@@ -81,10 +82,9 @@ class _EditNameFormPageState extends State<EditNameFormPage> {
                       width: 150,
                       child: ElevatedButton(
                         onPressed: () async {
-                          final data = _auth.currentUser;
                           final editar = FirebaseFirestore.instance
                               .collection('Usuario')
-                              .doc(data?.uid);
+                              .doc(widget.value);
                           if (_formKey.currentState!.validate()) {
                             setState(() {
                               editar.update({'Nombre': NombreController.text});
@@ -106,14 +106,14 @@ class _EditNameFormPageState extends State<EditNameFormPage> {
 }
 
 class EditPhoneFormPage extends StatefulWidget {
-  const EditPhoneFormPage({Key? key}) : super(key: key);
+  final String value;
+  const EditPhoneFormPage({Key? key, required this.value}) : super(key: key);
 
   @override
   State<EditPhoneFormPage> createState() => _EditPhoneFormPageState();
 }
 
 class _EditPhoneFormPageState extends State<EditPhoneFormPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
   final TelefController = TextEditingController();
 
@@ -182,10 +182,9 @@ class _EditPhoneFormPageState extends State<EditPhoneFormPage> {
                       width: 150,
                       child: ElevatedButton(
                         onPressed: () async {
-                          final data = _auth.currentUser;
                           final editar = FirebaseFirestore.instance
                               .collection('Usuario')
-                              .doc(data?.uid);
+                              .doc(widget.value);
                           if (_formKey.currentState!.validate()) {
                             setState(() {
                               editar.update({'Telefono': TelefController.text});
@@ -207,7 +206,8 @@ class _EditPhoneFormPageState extends State<EditPhoneFormPage> {
 }
 
 class EditEmailFormPage extends StatefulWidget {
-  const EditEmailFormPage({Key? key}) : super(key: key);
+  final String value;
+  const EditEmailFormPage({Key? key, required this.value}) : super(key: key);
 
   @override
   State<EditEmailFormPage> createState() => _EditEmailFormPageState();
@@ -217,6 +217,7 @@ class _EditEmailFormPageState extends State<EditEmailFormPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
+  late String iduser = widget.value;
 
   @override
   void dispose() {
@@ -247,7 +248,7 @@ class _EditEmailFormPageState extends State<EditEmailFormPage> {
               ),
               const SizedBox(
                 width: 330,
-                child: Text('Ingrese su Username',
+                child: Text('Ingrese su Nombre de Usuario',
                     style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
@@ -284,14 +285,120 @@ class _EditEmailFormPageState extends State<EditEmailFormPage> {
                       width: 150,
                       child: ElevatedButton(
                         onPressed: () {
-                          final data = _auth.currentUser;
+                          final data = FirebaseAuth.instance.currentUser;
                           final editar = FirebaseFirestore.instance
                               .collection('Usuario')
-                              .doc(data?.uid);
+                              .doc(widget.value);
+                          //final data = widget.value;
                           if (_formKey.currentState!.validate()) {
                             setState(() {
                               editar.update({'Email': emailController.text});
                               data?.updateEmail(emailController.text);
+                            });
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: const Text('Guardar',
+                            style: TextStyle(fontSize: 15)),
+                      ),
+                    ),
+                  )
+                ],
+              )
+            ],
+          )),
+    );
+  }
+}
+
+class EditPassword extends StatefulWidget {
+  final String value;
+  const EditPassword({Key? key, required this.value}) : super(key: key);
+
+  @override
+  State<EditPassword> createState() => _EditPasswordState();
+}
+
+class _EditPasswordState extends State<EditPassword> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final _formKey = GlobalKey<FormState>();
+  final passController = TextEditingController();
+  late String iduser = widget.value;
+
+  @override
+  void dispose() {
+    passController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Editar Contrasena'),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
+      ),
+      body: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 20,
+              ),
+              const SizedBox(
+                width: 330,
+                child: Text('Ingrese su nueva Contrasena',
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                    )),
+              ),
+              const SizedBox(
+                height: 6,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 40, 16, 0),
+                    child: SizedBox(
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Porfavor Ingrese su Contrasena';
+                          } else {
+                            return null;
+                          }
+                        },
+                        decoration: InputDecoration(labelText: 'Contrasena'),
+                        controller: passController,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 40, 16, 0),
+                    child: SizedBox(
+                      height: 70,
+                      width: 150,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          final data = FirebaseAuth.instance.currentUser;
+                          final editar = FirebaseFirestore.instance
+                              .collection('Usuario')
+                              .doc(widget.value);
+                          //final data = widget.value;
+                          if (_formKey.currentState!.validate()) {
+                            setState(() {
+                              editar.update({'Email': passController.text});
+                              data?.updatePassword(passController.text);
                             });
                             Navigator.pop(context);
                           }

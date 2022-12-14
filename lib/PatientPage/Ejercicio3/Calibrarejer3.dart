@@ -23,7 +23,7 @@ class _CalibrarEspEj3State extends State<CalibrarEspEj3>
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(Duration(seconds: 30), () {
+    Future.delayed(Duration(seconds: 35), () {
       setState(() {
         showbutton = true;
       });
@@ -67,7 +67,7 @@ class _CalibrarEspEj3State extends State<CalibrarEspEj3>
                               totalRepeatCount: 1,
                               animatedTexts: [
                                 RotateAnimatedText('Presione el area pelvica',
-                                    duration: Duration(seconds: 15)),
+                                    duration: Duration(seconds: 20)),
                                 RotateAnimatedText('Relaje el area pelvica',
                                     duration: Duration(seconds: 15)),
                               ])),
@@ -109,6 +109,7 @@ class _CalibrarEspEj3State extends State<CalibrarEspEj3>
                           .collection('data')
                           .orderBy('emg', descending: true)
                           .where('fechamax', isEqualTo: formatter)
+                          .where('emg', isEqualTo: 1024)
                           .limit(1)
                           .get()
                           .then((value) {
@@ -122,7 +123,7 @@ class _CalibrarEspEj3State extends State<CalibrarEspEj3>
                                   .collection('valormax')
                                   .add({
                             'emg': element.data()['emg'],
-                            'fecha': element.data()['fecha']
+                            'fecha': element.data()['fechamax']
                           });
                         });
                       });

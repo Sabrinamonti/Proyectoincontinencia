@@ -1,67 +1,124 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:loginpage/TecnicoPage/EdituserPage.dart';
+import 'package:loginpage/backend/Adminusuarioslist.dart';
 import 'package:loginpage/loginPage.dart';
 
-class Informacion {
-  List<int> id = [1, 2, 3, 4];
-  List<String> nombres = ['Sabrina', 'Luzi', 'Alejandra', 'Sophia'];
-  List<String> Apellidos = ['Montaño', 'Tapia', 'Garcia', 'Amador'];
-  List<int> numeroCel = [23454654, 2435435, 545433, 43432432];
-  List<String> contrasena = ['S443gdd', 'T9382sjf', 'akkdur4', 'gjdhduvn88'];
-
-}
-
 class TecnicoPage extends StatefulWidget {
-  const TecnicoPage({ Key? key }) : super(key: key);
+  const TecnicoPage({Key? key}) : super(key: key);
 
   @override
   State<TecnicoPage> createState() => _TecnicoPageState();
 }
 
 class _TecnicoPageState extends State<TecnicoPage> {
+  TextEditingController? _textEditingController = TextEditingController();
+  List Usuarioslista = [];
+  final _auth = FirebaseAuth.instance.currentUser;
+  List items = [];
+  List datosusuarios = [];
+  var idusuario;
+  var emailuser;
+  var passuser;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchdatabaselist();
+  }
+
+  fetchdatabaselist() async {
+    dynamic resultant = await AdminUsuarios().getUsers();
+    if (resultant == null) {
+      print('No se puede obtener ls informacion');
+    } else {
+      setState(() {
+        items = resultant;
+        datosusuarios = items;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bienvenido'),
-        backgroundColor: Colors.blue,
-        leading: 
-        IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.push(context, 
-            MaterialPageRoute(builder: (context) => const LoginPage()));
-          },
-        ),
-      ),
-      body: Center(
-        child: ListView(
+        appBar: AppBar(
+            title: const Text('Bienvenido'),
+            backgroundColor: Colors.blue,
+            leading: ElevatedButton(
+              child: const Icon(Icons.logout),
+              onPressed: () {
+                FirebaseAuth.instance.signOut();
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()));
+              },
+            )),
+        body: Column(
           children: [
-            Center(
-              child: DataTable(
-                sortAscending: true,
-                columns:
-                [
-                  DataColumn(label: Text('Id')),
-                  DataColumn(label: Text('Nombre')),
-                  DataColumn(label: Text('Apellido')),
-                  DataColumn(label: Text('Telefono')),
-                  DataColumn(label: Text('Contrasena')),
-                ], 
-                rows: [
-                  DataRow(
-                    selected: true,
-                    cells: [
-                    DataCell(
-                      Text('Sabri'),
-                    ),
-
-                  ])
-                ],
-              ),
-            )
+            SizedBox(height: 10),
+            TextField(
+              decoration: const InputDecoration(
+                  hintText: 'Buscar el Nombre del Usuario',
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(29)))),
+              onChanged: (value) {
+                setState(() {
+                  datosusuarios = items
+                      .where((element) => element
+                          .toString()
+                          .toLowerCase()
+                          .contains(value.toLowerCase()))
+                      .toList();
+                });
+                //filterUsers = usuarioslista;
+              },
+              controller: _textEditingController,
+            ),
+            Expanded(
+              child: ListView.builder(
+                  itemCount: _textEditingController!.text.isNotEmpty
+                      ? datosusuarios.length
+                      : items.length,
+                  shrinkWrap: true,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Card(
+                      child: ListTile(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        title: Text(datosusuarios[index]['Nombre'],
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold)),
+                        subtitle: Text(datosusuarios[index]['TipoUsuario']),
+                        trailing: ElevatedButton(
+                          onPressed: () async {
+                            setState(() {
+                              idusuario = datosusuarios[index]['Id'];
+                              emailuser = datosusuarios[index]['Email'];
+                              passuser = datosusuarios[index]['Contrasena'];
+                            });
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: ((context) => Editpage(
+                                        value: idusuario,
+                                        email: emailuser,
+                                        pass: passuser))));
+                            FirebaseAuth.instance.signOut();
+                            FirebaseAuth.instance.signInWithEmailAndPassword(
+                                email: emailuser, password: passuser);
+                          },
+                          child: Icon(Icons.edit),
+                        ),
+                      ),
+                    );
+                  }),
+            ),
           ],
-        ),
-      ),
-    );
+        ));
   }
 }

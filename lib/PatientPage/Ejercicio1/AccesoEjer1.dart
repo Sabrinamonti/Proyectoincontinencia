@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loginpage/PatientPage/Ejercicio1/Calibrarejer1.dart';
+import 'package:loginpage/PatientPage/Ejercicio1/Ejercicio1.dart';
 
 class inicioEjer1 extends StatelessWidget {
   const inicioEjer1({Key? key}) : super(key: key);
@@ -28,7 +29,7 @@ class inicioEjer1 extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             child: Container(
-              padding: EdgeInsets.all(15),
+              padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
                   gradient: LinearGradient(
                 colors: [Colors.indigo, Colors.black],
@@ -37,21 +38,27 @@ class inicioEjer1 extends StatelessWidget {
               )),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
+                  Text(
+                      "Prepare la piel para lograr una correcta conduccion entre la piel y el electrodo. Limpie la piel con agua templada. No utilice alcohol",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Color.fromARGB(187, 255, 255, 255),
+                          fontWeight: FontWeight.bold)),
                   Text(
                     'Coloquese los sensores como se muestra en la siguiente imagen',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontSize: 21,
+                        fontSize: 18,
                         color: Colors.white,
                         fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 6),
                   Image(
-                    alignment: Alignment.center,
-                    image: NetworkImage(
-                        'https://www.yourtrainingedge.com/wp-content/uploads/2019/05/background-calm-clouds-747964.jpg'),
-                    height: 255,
+                    alignment: Alignment.centerRight,
+                    image: AssetImage('assets/imageninicio/Electrodos.jpg'),
+                    height: 230,
                   ),
                 ],
               ),
@@ -114,15 +121,15 @@ class inicioEjer1 extends StatelessWidget {
               DocumentReference docsRef = FirebaseFirestore.instance
                   .collection('sensor')
                   .doc(currentuser?.uid)
-                  .collection('calibrar')
+                  .collection('Ejercicio')
                   .doc('sensor');
               docsRef.update({
                 'STATUS': 'ON',
               });
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const CalibrarEsp()));
+                  MaterialPageRoute(builder: (context) => const Ejercicio1()));
             },
-            child: Text('Iniciar Calibración'),
+            child: Text('Iniciar Ejercicio'),
           )
         ],
       ),

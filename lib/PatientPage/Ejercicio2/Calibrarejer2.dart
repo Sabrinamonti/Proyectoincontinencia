@@ -22,7 +22,7 @@ class _CalibrarEspEj2State extends State<CalibrarEspEj2>
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(Duration(seconds: 30), () {
+    Future.delayed(Duration(seconds: 35), () {
       setState(() {
         showbutton = true;
       });
@@ -66,7 +66,7 @@ class _CalibrarEspEj2State extends State<CalibrarEspEj2>
                               totalRepeatCount: 1,
                               animatedTexts: [
                                 RotateAnimatedText('Presione el area pelvica',
-                                    duration: Duration(seconds: 15)),
+                                    duration: Duration(seconds: 20)),
                                 RotateAnimatedText('Relaje el area pelvica',
                                     duration: Duration(seconds: 15)),
                               ])),
@@ -107,12 +107,12 @@ class _CalibrarEspEj2State extends State<CalibrarEspEj2>
                           .doc('sensor')
                           .collection('data')
                           .where('fechamax', isEqualTo: formatter)
+                          .where('emg', isNotEqualTo: 1024)
                           .orderBy('emg', descending: true)
                           .limit(1)
                           .get()
                           .then((value) {
                         value.docs.forEach((element) async {
-                          print('Se logro entrar al bd');
                           DocumentReference anadevalmax =
                               await FirebaseFirestore.instance
                                   .collection('sensor')
@@ -122,7 +122,7 @@ class _CalibrarEspEj2State extends State<CalibrarEspEj2>
                                   .collection('valormax')
                                   .add({
                             'emg': element.data()['emg'],
-                            'fecha': element.data()['fecha'],
+                            'fecha': element.data()['fechamax'],
                           });
                         });
                       });
@@ -143,9 +143,9 @@ class _CalibrarEspEj2State extends State<CalibrarEspEj2>
                         'STATUS': 'ON',
                       });
                       Navigator.push(
-                        context,
-                      MaterialPageRoute(
-                        builder: (context) => Ejercicio2()));
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Ejercicio2()));
                     },
                     child: Text('Iniciar ejercicio'),
                   ))

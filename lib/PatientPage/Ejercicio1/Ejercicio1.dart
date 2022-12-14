@@ -3,6 +3,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:loginpage/PatientPage/Ejercicio1/thermometropage.dart';
 import 'package:loginpage/PatientPage/Homepagepatient.dart';
 
@@ -21,7 +22,7 @@ class _Ejercicio1State extends State<Ejercicio1> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(Duration(seconds: 40), () {
+    Future.delayed(Duration(seconds: 600), () {
       setState(() {
         showbutton = true;
       });
@@ -63,13 +64,13 @@ class _Ejercicio1State extends State<Ejercicio1> {
                                     fontWeight: FontWeight.bold),
                                 child: AnimatedTextKit(
                                     repeatForever: false,
-                                    totalRepeatCount: 3,
+                                    totalRepeatCount: 20,
                                     animatedTexts: [
                                       FadeAnimatedText(
                                           'Presione el area pelvica',
-                                          duration: Duration(seconds: 20)),
+                                          duration: Duration(seconds: 15)),
                                       FadeAnimatedText('Relaje el area pelvica',
-                                          duration: Duration(seconds: 20)),
+                                          duration: Duration(seconds: 15)),
                                     ])),
                           ],
                         ),
@@ -85,6 +86,9 @@ class _Ejercicio1State extends State<Ejercicio1> {
                         child: Builder(builder: (BuildContext context) {
                           final FirebaseAuth _auth = FirebaseAuth.instance;
                           final currentuser = _auth.currentUser;
+                          final DateTime now = DateTime.now();
+                          final String formatter = DateFormat.yMd().format(now);
+
                           final documentStream = FirebaseFirestore.instance
                               .collection('sensor')
                               .doc(currentuser?.uid)
@@ -93,7 +97,7 @@ class _Ejercicio1State extends State<Ejercicio1> {
                               .listen((event) {
                             event.docs.forEach((element) {
                               setState(() {
-                                _temp = element.data()['valorej'];
+                                _temp = element.data()['valor'];
                               });
                             });
                           });
@@ -101,7 +105,7 @@ class _Ejercicio1State extends State<Ejercicio1> {
                             borderColor: Colors.red,
                             innerColor: Colors.green,
                             indicatorColor: Colors.red,
-                            temperature: _temp,
+                            temperature: (_temp * 100) / 1024,
                             height: 80,
                           );
                         }))),
@@ -112,6 +116,9 @@ class _Ejercicio1State extends State<Ejercicio1> {
                           onPressed: () async {
                             final FirebaseAuth _auth = FirebaseAuth.instance;
                             final currentuser = _auth.currentUser;
+                            final DateTime now = DateTime.now();
+                            final String formatter =
+                                DateFormat.yMd().format(now);
 
                             final DocmentStream = FirebaseFirestore.instance
                                 .collection('sensor')
@@ -119,6 +126,8 @@ class _Ejercicio1State extends State<Ejercicio1> {
                                 .collection('Ejercicio')
                                 .doc('sensor')
                                 .collection('data')
+                                .where('fechamax', isEqualTo: formatter)
+                                .where('emg', isNotEqualTo: 1024)
                                 .orderBy('emg', descending: true)
                                 .limit(1)
                                 .get()
@@ -133,7 +142,7 @@ class _Ejercicio1State extends State<Ejercicio1> {
                                         .collection('valormax')
                                         .add({
                                   'emg': element.data()['emg'],
-                                  'fecha': element.data()['fecha']
+                                  'fecha': element.data()['fechamax']
                                 });
                               });
                             });

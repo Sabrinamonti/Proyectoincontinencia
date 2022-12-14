@@ -98,7 +98,7 @@ class _MyproInfoMedState extends State<MyproInfoMed> {
                   Map<String, dynamic> data =
                       snapshot.data!.data() as Map<String, dynamic>;
                   return buildUserInfoDisplay(
-                      data['Email'], 'Email', EditEmailFormPage());
+                      data['Email'], 'Nombre de Usuario', EditEmailFormPage());
                 }
                 return Text('Loading');
               }),

@@ -31,11 +31,14 @@ class _EjerciciospageState extends State<Ejerciciospage> {
                   children: [
                     Column(
                       children: [
-                        bottonejercicio('assets/imageninicio/imageninicio.jpg',
+                        bottonejercicio(
+                            'assets/imageninicio/ImagenEjercicio1.jpg',
                             'Ejercicio1'),
-                        bottonejercicio2('assets/imageninicio/imageninicio.jpg',
+                        bottonejercicio2(
+                            'assets/imageninicio/ImagenEjercicio2.jpg',
                             'Ejercicio2'),
-                        bottonejercicio3('assets/imageninicio/imageninicio.jpg',
+                        bottonejercicio3(
+                            'assets/imageninicio/ImagenEjercicio3.jpg',
                             'Ejercicio3')
                       ],
                     )

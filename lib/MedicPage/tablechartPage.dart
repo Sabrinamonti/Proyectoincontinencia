@@ -19,14 +19,17 @@ class CalendarEvents extends StatefulWidget {
 }
 
 class _CalendarEventsState extends State<CalendarEvents> {
+  GlobalKey<RefreshIndicatorState> refreshKey =
+      GlobalKey<RefreshIndicatorState>();
   CalendarFormat format = CalendarFormat.month;
   final todaysDate = DateTime.now();
   DateTime _focusedCalendarDate = DateTime.now();
-  final _initialCalendarDate = DateTime(2000);
+  final _initialCalendarDate = DateTime(2020);
   final _lastCalendarDate = DateTime(2050);
   DateTime _selectedDay = DateTime.now();
   List EventosDB = [];
   List<EventModel> eve = [];
+  List<dynamic> _selectedEvents = [];
   //DateTime? selectedCalendarDate;
 
   late LinkedHashMap<DateTime, List> _groupedEvents;
@@ -35,6 +38,8 @@ class _CalendarEventsState extends State<CalendarEvents> {
   void initState() {
     //selectedCalendarDate = _focusedCalendarDate;
     super.initState();
+    fetchdatabaselist();
+    refreshKey = GlobalKey<RefreshIndicatorState>();
   }
 
   fetchdatabaselist() async {
@@ -78,6 +83,11 @@ class _CalendarEventsState extends State<CalendarEvents> {
           label: const Text('Agregar Evento'),
         ),
         body: SingleChildScrollView(
+            child: RefreshIndicator(
+          key: refreshKey,
+          onRefresh: () async {
+            fetchdatabaselist();
+          },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -170,69 +180,66 @@ class _CalendarEventsState extends State<CalendarEvents> {
                       //}
                     },
                   )),
-              Builder(builder: (BuildContext context) {
-                fetchdatabaselist();
-                _groupEvents(EventosDB);
-                DateTime selectedDate = _selectedDay;
-                final _selectedEvents = _groupedEvents[selectedDate] ?? [];
-                return Column(
-                  children: [
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: _selectedEvents.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Slidable(
+              SingleChildScrollView(
+                child: Builder(builder: (BuildContext context) {
+                  //fetchdatabaselist();
+                  _groupEvents(EventosDB);
+                  DateTime selectedDate = _selectedDay;
+                  final _selectedEvents = _groupedEvents[selectedDate] ?? [];
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: _selectedEvents.length,
+                    itemBuilder: (context, index) {
+                      final item = _selectedEvents[index];
+                      return Slidable(
                           startActionPane: ActionPane(
                             motion: const ScrollMotion(),
                             children: [
                               SlidableAction(
-                                onPressed: (context) async {
-                                  //final fin = _selectedEvents[index];
-                                  //final eliminar = FirebaseFirestore.instance
-                                  //.collection('Evento')
-                                  //.doc(fin);
-                                  setState(() {
-                                    print("Hola amgos");
-                                    _selectedEvents.removeAt(index);
-                                  });
+                                onPressed: (context) {
+                                  //print(_selectedEvents.length);
+                                  //setState(() {
+                                  _selectedEvents.removeAt(index);
+                                  //});
+                                  //print(_selectedEvents);
                                 },
                                 backgroundColor: Colors.red,
-                                icon: Icons.cancel,
-                                label: 'Eliminar Tarea',
+                                foregroundColor: Colors.white,
+                                icon: Icons.delete,
+                                label: 'Eliminar',
                               )
                             ],
                           ),
-                          child: ListTile(
-                            leading: _selectedEvents[index]['cumplido'] == false
-                                ? const Icon(Icons.cancel, color: Colors.red)
-                                : const Icon(
-                                    Icons.done,
-                                    color: Colors.green,
-                                  ),
-                            title: Text(_selectedEvents[index]["titulo"]),
-                            subtitle:
-                                Text(_selectedEvents[index]["descripcion"]),
-                            trailing: IconButton(
-                              icon: Icon(Icons.edit),
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Createevent(
-                                              value: widget.value,
-                                            )));
-                              },
+                          child: Card(
+                            child: ListTile(
+                              leading: _selectedEvents[index]['cumplido'] ==
+                                      false
+                                  ? const Icon(Icons.cancel, color: Colors.red)
+                                  : const Icon(
+                                      Icons.done,
+                                      color: Colors.green,
+                                    ),
+                              title: Text(_selectedEvents[index]["titulo"]),
+                              subtitle:
+                                  Text(_selectedEvents[index]["descripcion"]),
+                              //trailing: IconButton(
+                              //icon: Icon(Icons.delete),
+                              //onPressed: () async {
+                              // setState(() {
+                              //_selectedEvents.removeAt(index);
+                              //});
+                              // },
+                              // ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                );
-              }),
+                          ));
+                    },
+                    //),
+                  );
+                }),
+              )
             ],
           ),
-        ));
+        )));
   }
 }
 

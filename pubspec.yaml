@@ -51,6 +51,8 @@ dependencies:
   animated_text_kit: ^4.2.2
   intl: 
   fl_chart:
+  rxdart:
+  syncfusion_flutter_charts: 
   
 dev_dependencies:
   flutter_test:
@@ -80,6 +82,15 @@ flutter:
      - assets/imageninicio/imageninicio.jpg
      - assets/imageninicio/imagenrosaabierta.jpg
      - assets/imageninicio/imagenrosacerrada.jpg
+     - assets/imageninicio/ImagenElectrodos.jpeg
+     - assets/imageninicio/ImagenEjercicio1.jpg
+     - assets/imageninicio/ImagenEjercicio2.jpg
+     - assets/imageninicio/ImagenEjercicio3.jpg
+     - assets/imageninicio/Rosaabierta.jpg
+     - assets/imageninicio/Rosasemiabierta.jpg
+     - assets/imageninicio/Rosasemicerrada.jpg
+     - assets/imageninicio/Rosacerrada.jpg
+     - assets/imageninicio/Electrodos.jpg
      - assets/certs/AmazonRootCA1.pem
      - assets/certs/DeviceCertificate.crt
      - assets/certs/Private.key 

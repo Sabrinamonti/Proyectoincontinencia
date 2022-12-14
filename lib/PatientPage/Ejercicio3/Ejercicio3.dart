@@ -27,7 +27,7 @@ class _Ejercicio3State extends State<Ejercicio3>
     super.initState();
     //_controller = new AnimationController(vsync: this);
     //_animation = Tween(begin: 0.0, end: 1).animate(_controller);
-    Future.delayed(Duration(seconds: 10), () {
+    Future.delayed(Duration(seconds: 600), () {
       setState(() {
         showbutton = true;
       });
@@ -76,13 +76,13 @@ class _Ejercicio3State extends State<Ejercicio3>
                                     fontWeight: FontWeight.bold),
                                 child: AnimatedTextKit(
                                     repeatForever: false,
-                                    totalRepeatCount: 3,
+                                    totalRepeatCount: 20,
                                     animatedTexts: [
                                       FadeAnimatedText(
                                           'Presione el area pelvica',
-                                          duration: Duration(seconds: 20)),
+                                          duration: Duration(seconds: 15)),
                                       FadeAnimatedText('Relaje el area pelvica',
-                                          duration: Duration(seconds: 20)),
+                                          duration: Duration(seconds: 15)),
                                     ])),
                           ],
                         ),
@@ -103,12 +103,14 @@ class _Ejercicio3State extends State<Ejercicio3>
                         .collection('calibrar')
                         .doc('sensor')
                         .collection('valormax')
-                        .where('fechamax', isEqualTo: formatter)
+                        .where('fecha', isEqualTo: formatter)
+                        .limit(1)
                         .get()
                         .then((value) => {
                               value.docs.forEach((element) {
                                 setState(() {
                                   valormax = element.data()['emg'];
+                                  valormax = valormax / 1024;
                                 });
                               })
                             });
@@ -120,28 +122,34 @@ class _Ejercicio3State extends State<Ejercicio3>
                         .listen((event) {
                       event.docs.forEach((element) {
                         setState(() {
-                          valor = element.data()['valorej'];
-                          valor = (valor / 100) / (valormax / 100);
+                          valor = element.data()['valor'];
+                          valor = (valor / 1024);
                         });
                       });
                     });
                     return Container(
-                      alignment: Alignment.center,
-                      height: 300,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        image: DecorationImage(
-                            image: AssetImage(
-                                'assets/imageninicio/imagenrosaabierta.jpg')),
-                        color: Color.fromARGB(255, 37, 36, 36),
-                      ),
-                      child: AnimatedOpacity(
-                        duration: Duration(milliseconds: 700),
-                        opacity: valor,
-                        child: Image.asset(
-                            "assets/imageninicio/imagenrosacerrada.jpg"),
-                      ),
-                    );
+                        alignment: Alignment.center,
+                        height: 300,
+                        //decoration: BoxDecoration(
+                        //borderRadius: BorderRadius.circular(20),
+                        //image: DecorationImage(
+                        //  image: AssetImage(
+                        //    'assets/imageninicio/imagenrosaabierta.jpg')),
+                        //color: Color.fromARGB(255, 37, 36, 36),
+                        //),
+                        child: Builder(builder: (BuildContext context) {
+                          String imagen = "assets/imageninicio/Rosacerrada.jpg";
+                          if ((valor / valormax) <= 0.30) {
+                            imagen = "assets/imageninicio/Rosaabierta.jpg";
+                          } else if ((valor / valormax) > 0.3 &&
+                              (valor / valormax) <= 0.60) {
+                            imagen = "assets/imageninicio/Rosasemiabierta.jpg";
+                          } else if ((valor / valormax) > 0.60 &&
+                              (valor / valormax) <= 0.90) {
+                            imagen = "assets/imageninicio/Rosasemicerrada.jpg";
+                          }
+                          return Image.asset(imagen);
+                        }));
                   }),
                 ),
                 showbutton
@@ -149,6 +157,7 @@ class _Ejercicio3State extends State<Ejercicio3>
                         bottom: 70,
                         child: ElevatedButton(
                           onPressed: () {
+                            print(valor);
                             final DateTime now = DateTime.now();
                             final String formatter =
                                 DateFormat.yMd().format(now);
@@ -162,6 +171,7 @@ class _Ejercicio3State extends State<Ejercicio3>
                                 .collection('data')
                                 .orderBy('emg', descending: true)
                                 .where('fechamax', isEqualTo: formatter)
+                                .where('emg', isNotEqualTo: 1024)
                                 .limit(1)
                                 .get()
                                 .then((value) {
@@ -175,7 +185,7 @@ class _Ejercicio3State extends State<Ejercicio3>
                                         .collection('valormax')
                                         .add({
                                   'emg': element.data()['emg'],
-                                  'fecha': element.data()['fecha']
+                                  'fecha': element.data()['fechamax']
                                 });
                               });
                             });

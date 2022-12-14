@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:loginpage/MedicPage/BottombarMedic.dart';
@@ -17,8 +18,9 @@ class homePage extends StatefulWidget {
 }
 
 class _homePageState extends State<homePage> {
+  GlobalKey<RefreshIndicatorState> refreshKey =
+      GlobalKey<RefreshIndicatorState>();
   TextEditingController? _textEditingController = TextEditingController();
-  List Pacienteslista = [];
   final _auth = FirebaseAuth.instance.currentUser;
   List items = [];
   List datospacientes = [];
@@ -28,6 +30,7 @@ class _homePageState extends State<homePage> {
   void initState() {
     super.initState();
     fetchdatabaselist();
+    refreshKey = GlobalKey<RefreshIndicatorState>();
   }
 
   fetchdatabaselist() async {
@@ -79,6 +82,11 @@ class _homePageState extends State<homePage> {
               controller: _textEditingController,
             ),
             Expanded(
+                child: RefreshIndicator(
+              key: refreshKey,
+              onRefresh: () async {
+                await fetchdatabaselist();
+              },
               child: ListView.builder(
                   itemCount: _textEditingController!.text.isNotEmpty
                       ? datospacientes.length
@@ -117,9 +125,9 @@ class _homePageState extends State<homePage> {
                       ),
                     );
                   }),
-            ),
+            )),
             ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   Navigator.push(
                       context,
                       MaterialPageRoute(

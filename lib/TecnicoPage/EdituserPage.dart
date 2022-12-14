@@ -1,35 +1,41 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:loginpage/PatientPage/EditProfilePatientPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:loginpage/TecnicoPage/TecnicoPage.dart';
+import 'package:loginpage/TecnicoPage/funcionEdituser.dart';
 
-class ProfilePatient extends StatefulWidget {
-  const ProfilePatient({Key? key}) : super(key: key);
+class Editpage extends StatefulWidget {
+  final String value;
+  final String email;
+  final String pass;
+  const Editpage(
+      {Key? key, required this.value, required this.email, required this.pass})
+      : super(key: key);
 
   @override
-  State<ProfilePatient> createState() => _ProfilePatientState();
+  State<Editpage> createState() => _EditpageState();
 }
 
-class _ProfilePatientState extends State<ProfilePatient> {
-  final FirebaseAuth auth = FirebaseAuth.instance;
-  String inputData() {
-    String usuario = "";
-    final User? user = auth.currentUser;
-    final uemail = user?.email;
-    usuario = uemail.toString();
-    return usuario;
-    // here you write the codes to input the data into firestore
-  }
-
+class _EditpageState extends State<Editpage> {
   @override
   Widget build(BuildContext context) {
-    final Datauser = auth.currentUser;
     final CollectionReference InfoPat =
         FirebaseFirestore.instance.collection('Usuario');
 
     return Scaffold(
+      appBar: AppBar(
+          title: const Text('Pagina Perfil'),
+          backgroundColor: Colors.blue,
+          leading: ElevatedButton(
+            child: const Icon(Icons.arrow_back),
+            onPressed: () {
+              //FirebaseAuth.instance.signOut();
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const TecnicoPage()));
+            },
+          )),
       body: Column(
         children: [
           AppBar(
@@ -51,7 +57,7 @@ class _ProfilePatientState extends State<ProfilePatient> {
             child: DisplayImage(
               imagePath: 'Assets/imageninicio/imageninicio.jpg',
               onPressed: () {
-                print("el usuario es:" + inputData());
+                print("Cambio de imagen");
               },
             ),
           ),
@@ -60,14 +66,14 @@ class _ProfilePatientState extends State<ProfilePatient> {
           ),
           Divider(),
           FutureBuilder(
-              future: InfoPat.doc(Datauser?.uid).get(),
+              future: InfoPat.doc(widget.value).get(),
               builder: (BuildContext context,
                   AsyncSnapshot<DocumentSnapshot> snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   Map<String, dynamic> data =
                       snapshot.data!.data() as Map<String, dynamic>;
-                  return buildUserInfoDisplay(
-                      data['Nombre'], 'Nombre Completo', EditNameFormPage());
+                  return buildUserInfoDisplay(data['Nombre'], 'Nombre Completo',
+                      EditName(value: widget.value));
                 }
                 return Text('Loading');
               }),
@@ -75,14 +81,14 @@ class _ProfilePatientState extends State<ProfilePatient> {
             height: 15,
           ),
           FutureBuilder(
-              future: InfoPat.doc(Datauser?.uid).get(),
+              future: InfoPat.doc(widget.value).get(),
               builder: (BuildContext context,
                   AsyncSnapshot<DocumentSnapshot> snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   Map<String, dynamic> data =
                       snapshot.data!.data() as Map<String, dynamic>;
-                  return buildUserInfoDisplay(
-                      data['Telefono'], 'Telefono', EditPhoneFormPage());
+                  return buildUserInfoDisplay(data['Telefono'], 'Telefono',
+                      EditPhoneFormPage(value: widget.value));
                 }
                 return Text('Loading');
               }),
@@ -90,17 +96,31 @@ class _ProfilePatientState extends State<ProfilePatient> {
             height: 15,
           ),
           FutureBuilder(
-              future: InfoPat.doc(Datauser?.uid).get(),
+              future: InfoPat.doc(widget.value).get(),
               builder: (BuildContext context,
                   AsyncSnapshot<DocumentSnapshot> snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   Map<String, dynamic> data =
                       snapshot.data!.data() as Map<String, dynamic>;
                   return buildUserInfoDisplay(
-                      data['Email'], 'Nombre de Usuario', EditEmailFormPage());
+                      data['Email'],
+                      'Nombre de Usuario',
+                      EditEmailFormPage(value: widget.value));
                 }
                 return Text('Loading');
               }),
+          FutureBuilder(
+              future: InfoPat.doc(widget.value).get(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<DocumentSnapshot> snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  Map<String, dynamic> data =
+                      snapshot.data!.data() as Map<String, dynamic>;
+                  return buildUserInfoDisplay(data['Contrasena'], 'Contrasena',
+                      EditPassword(value: widget.value));
+                }
+                return Text('Loading');
+              })
         ],
       ),
     );

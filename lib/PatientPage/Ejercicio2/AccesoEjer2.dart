@@ -49,8 +49,7 @@ class inicioEjer2 extends StatelessWidget {
                   SizedBox(height: 6),
                   Image(
                     alignment: Alignment.center,
-                    image: NetworkImage(
-                        'https://www.yourtrainingedge.com/wp-content/uploads/2019/05/background-calm-clouds-747964.jpg'),
+                    image: AssetImage('assets/imageninicio/Electrodos.jpg'),
                     height: 255,
                   ),
                 ],

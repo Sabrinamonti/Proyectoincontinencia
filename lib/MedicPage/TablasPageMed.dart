@@ -36,17 +36,17 @@ class _tablaspageMedState extends State<tablaspageMed> {
               bottom: const TabBar(
                 indicatorColor: Colors.white,
                 tabs: [
-                  Tab(text: 'EMG', icon: Icon(Icons.table_chart)),
                   Tab(
                       text: 'Tratamientos Comp.',
                       icon: Icon(Icons.graphic_eq_rounded)),
+                  Tab(text: 'EMG', icon: Icon(Icons.table_chart)),
                 ],
               ),
             ),
             body: TabBarView(
               children: [
-                LineCharts(value: widget.value),
                 CalendarEvents(value: widget.value),
+                LineCharts(value: widget.value),
               ],
             ),
           )),

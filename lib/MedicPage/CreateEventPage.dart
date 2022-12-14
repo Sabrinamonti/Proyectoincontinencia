@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loginpage/MedicPage/TablasPageMed.dart';
 import 'package:loginpage/MedicPage/homepageMed.dart';
 import 'package:loginpage/MedicPage/tablechartPage.dart';
 import 'package:intl/intl.dart';
@@ -123,7 +124,7 @@ class _CreateeventState extends State<Createevent> {
                   await FirebaseFirestore.instance.collection('Evento');
               String docId = ref.doc().id;
               await ref.doc(docId).set({
-                'id': 'Pacientes',
+                'id': widget.value,
                 'titulo': titulo,
                 'descripcion': Descp,
                 'eventDate': startdate.millisecondsSinceEpoch,
@@ -147,7 +148,11 @@ class _CreateeventState extends State<Createevent> {
                 });
                 startdate = A;
               }
-              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          tablaspageMed(value: widget.value)));
               return;
             }
           },

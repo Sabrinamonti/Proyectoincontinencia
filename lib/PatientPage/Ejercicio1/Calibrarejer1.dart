@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:loginpage/PatientPage/Ejercicio1/Ejercicio1.dart';
 
 class CalibrarEsp extends StatefulWidget {
@@ -97,12 +98,16 @@ class _CalibrarEspState extends State<CalibrarEsp>
                     onPressed: () async {
                       final FirebaseAuth _auth = FirebaseAuth.instance;
                       final currentuser = _auth.currentUser;
+                      final DateTime now = DateTime.now();
+                      final String formatter = DateFormat.yMd().format(now);
+
                       final DocmentStream = FirebaseFirestore.instance
                           .collection('sensor')
                           .doc(currentuser?.uid)
                           .collection('calibrar')
                           .doc('sensor')
                           .collection('data')
+                          .where('fechamax', isEqualTo: formatter)
                           .orderBy('emg', descending: true)
                           .limit(1)
                           .get()
@@ -117,7 +122,7 @@ class _CalibrarEspState extends State<CalibrarEsp>
                                   .collection('valormax')
                                   .add({
                             'emg': element.data()['emg'],
-                            'fecha': element.data()['fecha']
+                            'fecha': element.data()['fechamax']
                           });
                         });
                       });

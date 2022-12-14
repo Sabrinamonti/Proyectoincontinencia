@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:loginpage/MedicPage/homepageMed.dart';
 import 'package:loginpage/backend/Userslistcode.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rxdart/rxdart.dart';
 
 class UsersList extends StatefulWidget {
   const UsersList({Key? key}) : super(key: key);
@@ -81,6 +83,14 @@ class _UsersListState extends State<UsersList> {
             controller: _textEditingController,
             decoration: InputDecoration(hintText: 'Buscar Paciente'),
           ),
+        ),
+        leading: ElevatedButton(
+          style: ElevatedButton.styleFrom(primary: Colors.purple[200]),
+          child: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const homePage()));
+          },
         ),
       ),
       body: Container(
