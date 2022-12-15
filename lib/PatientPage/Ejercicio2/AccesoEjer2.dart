@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loginpage/PatientPage/Ejercicio2/Calibrarejer2.dart';
+import 'package:loginpage/PatientPage/Ejercicio2/Ejercicio2.dart';
 
 class inicioEjer2 extends StatelessWidget {
   const inicioEjer2({Key? key}) : super(key: key);
@@ -108,21 +109,8 @@ class inicioEjer2 extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              final FirebaseAuth _auth = FirebaseAuth.instance;
-              final currentuser = _auth.currentUser;
-
-              DocumentReference docCal = FirebaseFirestore.instance
-                  .collection('sensor')
-                  .doc(currentuser?.uid)
-                  .collection('calibrar')
-                  .doc('sensor');
-              docCal.update({
-                'STATUS': 'ON',
-              });
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const CalibrarEspEj2()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const Ejercicio2()));
             },
             child: Text('Iniciar Calibración'),
           )

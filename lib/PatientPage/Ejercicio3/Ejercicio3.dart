@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,12 +16,29 @@ class Ejercicio3 extends StatefulWidget {
 
 class _Ejercicio3State extends State<Ejercicio3>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation _animation;
+  late AnimationController _controller =
+      AnimationController(vsync: this, duration: Duration(seconds: 15))
+        ..repeat(reverse: true);
+
+  late Animation<double> _animation =
+      Tween(begin: 0.0, end: 1.0).animate(_controller);
+
   bool showbutton = false;
   double valor = 0;
   double valormax = 0;
   bool cambioimagen = false;
+
+  static const seconds = 16;
+  double secs = 30;
+  Timer? timer;
+
+  void startTimer() {
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        secs--;
+      });
+    });
+  }
 
   @override
   void initState() {
@@ -90,114 +109,11 @@ class _Ejercicio3State extends State<Ejercicio3>
                     ),
                   ),
                 ),
-                Positioned(
-                  top: 120,
-                  child: Builder(builder: (BuildContext context) {
-                    final DateTime now = DateTime.now();
-                    final String formatter = DateFormat.yMd().format(now);
-                    final FirebaseAuth _auth = FirebaseAuth.instance;
-                    final currentuser = _auth.currentUser;
-                    final valmax = FirebaseFirestore.instance
-                        .collection('sensor')
-                        .doc(currentuser?.uid)
-                        .collection('calibrar')
-                        .doc('sensor')
-                        .collection('valormax')
-                        .where('fecha', isEqualTo: formatter)
-                        .limit(1)
-                        .get()
-                        .then((value) => {
-                              value.docs.forEach((element) {
-                                setState(() {
-                                  valormax = element.data()['emg'];
-                                  valormax = valormax / 1024;
-                                });
-                              })
-                            });
-                    final DocsSens = FirebaseFirestore.instance
-                        .collection('sensor')
-                        .doc(currentuser?.uid)
-                        .collection('Ejercicio')
-                        .snapshots()
-                        .listen((event) {
-                      event.docs.forEach((element) {
-                        setState(() {
-                          valor = element.data()['valor'];
-                          valor = (valor / 1024);
-                        });
-                      });
-                    });
-                    return Container(
-                        alignment: Alignment.center,
-                        height: 300,
-                        //decoration: BoxDecoration(
-                        //borderRadius: BorderRadius.circular(20),
-                        //image: DecorationImage(
-                        //  image: AssetImage(
-                        //    'assets/imageninicio/imagenrosaabierta.jpg')),
-                        //color: Color.fromARGB(255, 37, 36, 36),
-                        //),
-                        child: Builder(builder: (BuildContext context) {
-                          String imagen = "assets/imageninicio/Rosacerrada.jpg";
-                          if ((valor / valormax) <= 0.30) {
-                            imagen = "assets/imageninicio/Rosaabierta.jpg";
-                          } else if ((valor / valormax) > 0.3 &&
-                              (valor / valormax) <= 0.60) {
-                            imagen = "assets/imageninicio/Rosasemiabierta.jpg";
-                          } else if ((valor / valormax) > 0.60 &&
-                              (valor / valormax) <= 0.90) {
-                            imagen = "assets/imageninicio/Rosasemicerrada.jpg";
-                          }
-                          return Image.asset(imagen);
-                        }));
-                  }),
-                ),
                 showbutton
                     ? Positioned(
                         bottom: 70,
                         child: ElevatedButton(
                           onPressed: () {
-                            print(valor);
-                            final DateTime now = DateTime.now();
-                            final String formatter =
-                                DateFormat.yMd().format(now);
-                            final FirebaseAuth _auth = FirebaseAuth.instance;
-                            final currentuser = _auth.currentUser;
-                            final DocmentStream = FirebaseFirestore.instance
-                                .collection('sensor')
-                                .doc(currentuser?.uid)
-                                .collection('Ejercicio')
-                                .doc('sensor')
-                                .collection('data')
-                                .orderBy('emg', descending: true)
-                                .where('fechamax', isEqualTo: formatter)
-                                .where('emg', isNotEqualTo: 1024)
-                                .limit(1)
-                                .get()
-                                .then((value) {
-                              value.docs.forEach((element) async {
-                                DocumentReference anadevalmax =
-                                    await FirebaseFirestore.instance
-                                        .collection('sensor')
-                                        .doc(currentuser?.uid)
-                                        .collection('Ejercicio')
-                                        .doc('sensor')
-                                        .collection('valormax')
-                                        .add({
-                                  'emg': element.data()['emg'],
-                                  'fecha': element.data()['fechamax']
-                                });
-                              });
-                            });
-                            DocumentReference stopej1 = FirebaseFirestore
-                                .instance
-                                .collection('sensor')
-                                .doc(currentuser?.uid)
-                                .collection('Ejercicio')
-                                .doc('sensor');
-                            stopej1.update({
-                              'STATUS': 'OFF',
-                            });
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -205,7 +121,21 @@ class _Ejercicio3State extends State<Ejercicio3>
                           },
                           child: Text('Finalizar'),
                         ))
-                    : Container(),
+                    : Positioned(
+                        top: 250,
+                        child: Container(
+                          height: 250,
+                          width: 250,
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: AssetImage(
+                                      'assets/imageninicio/Rosaabierta.jpg'))),
+                          child: FadeTransition(
+                            opacity: _animation,
+                            child: Image.asset(
+                                'assets/imageninicio/Rosacerrada.jpg'),
+                          ),
+                        ))
               ],
             ),
           ),

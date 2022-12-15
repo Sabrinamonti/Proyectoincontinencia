@@ -81,80 +81,16 @@ class _Ejercicio1State extends State<Ejercicio1> {
                 Positioned(
                     top: 120,
                     child: SizedBox(
-                        height: 420,
-                        width: 90,
-                        child: Builder(builder: (BuildContext context) {
-                          final FirebaseAuth _auth = FirebaseAuth.instance;
-                          final currentuser = _auth.currentUser;
-                          final DateTime now = DateTime.now();
-                          final String formatter = DateFormat.yMd().format(now);
-
-                          final documentStream = FirebaseFirestore.instance
-                              .collection('sensor')
-                              .doc(currentuser?.uid)
-                              .collection('Ejercicio')
-                              .snapshots()
-                              .listen((event) {
-                            event.docs.forEach((element) {
-                              setState(() {
-                                _temp = element.data()['valor'];
-                              });
-                            });
-                          });
-                          return ThermometerWidget(
-                            borderColor: Colors.red,
-                            innerColor: Colors.green,
-                            indicatorColor: Colors.red,
-                            temperature: (_temp * 100) / 1024,
-                            height: 80,
-                          );
-                        }))),
+                      height: 420,
+                      width: 350,
+                      child: Image.asset(
+                          'assets/imageninicio/ImagenEjercicio1.jpg'),
+                    )),
                 showbutton
                     ? Positioned(
                         bottom: 70,
                         child: ElevatedButton(
                           onPressed: () async {
-                            final FirebaseAuth _auth = FirebaseAuth.instance;
-                            final currentuser = _auth.currentUser;
-                            final DateTime now = DateTime.now();
-                            final String formatter =
-                                DateFormat.yMd().format(now);
-
-                            final DocmentStream = FirebaseFirestore.instance
-                                .collection('sensor')
-                                .doc(currentuser?.uid)
-                                .collection('Ejercicio')
-                                .doc('sensor')
-                                .collection('data')
-                                .where('fechamax', isEqualTo: formatter)
-                                .where('emg', isNotEqualTo: 1024)
-                                .orderBy('emg', descending: true)
-                                .limit(1)
-                                .get()
-                                .then((value) {
-                              value.docs.forEach((element) async {
-                                DocumentReference anadevalmax =
-                                    await FirebaseFirestore.instance
-                                        .collection('sensor')
-                                        .doc(currentuser?.uid)
-                                        .collection('Ejercicio')
-                                        .doc('sensor')
-                                        .collection('valormax')
-                                        .add({
-                                  'emg': element.data()['emg'],
-                                  'fecha': element.data()['fechamax']
-                                });
-                              });
-                            });
-                            DocumentReference stopej1 = FirebaseFirestore
-                                .instance
-                                .collection('sensor')
-                                .doc(currentuser?.uid)
-                                .collection('Ejercicio')
-                                .doc('sensor');
-                            stopej1.update({
-                              'STATUS': 'OFF',
-                            });
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(

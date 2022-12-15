@@ -12,7 +12,14 @@ class Ejercicio2 extends StatefulWidget {
   State<Ejercicio2> createState() => _Ejercicio2State();
 }
 
-class _Ejercicio2State extends State<Ejercicio2> {
+class _Ejercicio2State extends State<Ejercicio2> with TickerProviderStateMixin {
+  late final AnimationController _controller =
+      AnimationController(vsync: this, duration: const Duration(seconds: 16))
+        ..repeat(reverse: true);
+
+  late Animation<Offset> _animationvertical =
+      Tween(begin: Offset(0.1, 2.5), end: Offset.zero).animate(_controller);
+
   bool showbutton = false;
   late double progress = 0;
   late double valormax = 1;
@@ -32,7 +39,16 @@ class _Ejercicio2State extends State<Ejercicio2> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    const double smallLogo = 100;
+    const double bigLogo = 200;
     return Scaffold(
         appBar: AppBar(
           title: Text('Ejercicio'),
@@ -80,99 +96,11 @@ class _Ejercicio2State extends State<Ejercicio2> {
                     ),
                   ),
                 ),
-                Positioned(
-                    top: 200,
-                    child: SizedBox(
-                        height: 250,
-                        width: 250,
-                        child: Stack(fit: StackFit.expand, children: [
-                          Builder(builder: (BuildContext context) {
-                            final DateTime now = DateTime.now();
-                            final String formatter =
-                                DateFormat.yMd().format(now);
-                            final valmax = FirebaseFirestore.instance
-                                .collection('sensor')
-                                .doc(currentuser?.uid)
-                                .collection('calibrar')
-                                .doc('sensor')
-                                .collection('valormax')
-                                .limit(1)
-                                .where('fecha', isEqualTo: formatter)
-                                .get()
-                                .then((value) => {
-                                      value.docs.forEach((element) {
-                                        setState(() {
-                                          valormax = element.data()['emg'];
-                                        });
-                                      })
-                                    });
-
-                            final documentStream = FirebaseFirestore.instance
-                                .collection('sensor')
-                                .doc(currentuser?.uid)
-                                .collection('Ejercicio')
-                                .snapshots()
-                                .listen((event) {
-                              event.docs.forEach((element) {
-                                setState(() {
-                                  progress = element.data()['valor'];
-                                  progress =
-                                      (progress / 1024) / (valormax / 1024);
-                                });
-                              });
-                            });
-                            return CircularProgressIndicator(
-                              backgroundColor: Colors.grey,
-                              color: Colors.green,
-                              strokeWidth: 30,
-                              value: progress,
-                            );
-                          }),
-                          Center(child: buildProgress())
-                        ]))),
                 showbutton
                     ? Positioned(
                         bottom: 70,
                         child: ElevatedButton(
                           onPressed: () {
-                            final DateTime now = DateTime.now();
-                            final String formatter =
-                                DateFormat.yMd().format(now);
-                            final DocmentStream = FirebaseFirestore.instance
-                                .collection('sensor')
-                                .doc(currentuser?.uid)
-                                .collection('Ejercicio')
-                                .doc('sensor')
-                                .collection('data')
-                                .orderBy('emg', descending: true)
-                                .where('fechamax', isEqualTo: formatter)
-                                .where('emg', isNotEqualTo: 1024)
-                                .limit(1)
-                                .get()
-                                .then((value) {
-                              value.docs.forEach((element) async {
-                                DocumentReference anadevalmax =
-                                    await FirebaseFirestore.instance
-                                        .collection('sensor')
-                                        .doc(currentuser?.uid)
-                                        .collection('Ejercicio')
-                                        .doc('sensor')
-                                        .collection('valormax')
-                                        .add({
-                                  'emg': element.data()['emg'],
-                                  'fecha': element.data()['fechamax']
-                                });
-                              });
-                            });
-                            DocumentReference stopej1 = FirebaseFirestore
-                                .instance
-                                .collection('sensor')
-                                .doc(currentuser?.uid)
-                                .collection('Ejercicio')
-                                .doc('sensor');
-                            stopej1.update({
-                              'STATUS': 'OFF',
-                            });
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -180,7 +108,22 @@ class _Ejercicio2State extends State<Ejercicio2> {
                           },
                           child: Text('Finalizar'),
                         ))
-                    : Container(),
+                    : Positioned(
+                        top: 200,
+                        child: Column(
+                          children: [
+                            SlideTransition(
+                                position: _animationvertical,
+                                child: Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.blue[200],
+                                  ),
+                                ))
+                          ],
+                        ))
               ],
             ),
           ),
