@@ -33,6 +33,12 @@ class _CalibrarEspEj2State extends State<CalibrarEspEj2>
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

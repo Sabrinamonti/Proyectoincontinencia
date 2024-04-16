@@ -110,10 +110,12 @@ class _LoginPageState extends State<LoginPage> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => const TabBarPaciente()));
-            } else if (Datauser?.email == email && typeuser == "Medico") {
+            }
+            if (Datauser?.email == email && typeuser == "Medico") {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const BottomBar()));
-            } else {
+            }
+            if (Datauser?.email == email && typeuser == "Admin") {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const TecnicoPage()));
             }

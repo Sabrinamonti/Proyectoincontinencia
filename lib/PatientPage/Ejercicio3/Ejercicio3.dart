@@ -21,13 +21,23 @@ class _Ejercicio3State extends State<Ejercicio3>
   double valormax = 0;
   bool cambioimagen = false;
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  late final currentuser = _auth.currentUser;
+
+  late Stream<DocumentSnapshot> _stream;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    //_controller = new AnimationController(vsync: this);
-    //_animation = Tween(begin: 0.0, end: 1).animate(_controller);
-    Future.delayed(Duration(seconds: 600), () {
+
+    _stream = FirebaseFirestore.instance
+        .collection('sensor')
+        .doc(currentuser?.uid)
+        .collection('Ejercicio')
+        .doc('sensor')
+        .snapshots();
+
+    Future.delayed(Duration(seconds: 120), () {
       setState(() {
         showbutton = true;
       });
@@ -36,7 +46,6 @@ class _Ejercicio3State extends State<Ejercicio3>
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _controller.dispose();
   }
@@ -44,59 +53,69 @@ class _Ejercicio3State extends State<Ejercicio3>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Ejercicio'),
-        ),
-        body: Center(
-          child: Container(
+      appBar: AppBar(
+        title: Text('Ejercicio'),
+      ),
+      body: Center(
+        child: Container(
+          alignment: Alignment.center,
+          child: Stack(
             alignment: Alignment.center,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Positioned(
-                  top: 50,
-                  width: 350,
+            children: [
+              Positioned(
+                top: 50,
+                width: 350,
+                child: Container(
+                  alignment: Alignment.center,
+                  margin: const EdgeInsets.only(left: 20, right: 20),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.transparent),
                   child: Container(
                     alignment: Alignment.center,
-                    margin: const EdgeInsets.only(left: 20, right: 20),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.transparent),
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: Center(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            DefaultTextStyle(
-                                style: const TextStyle(
-                                    fontSize: 28,
-                                    color: Color.fromARGB(255, 1, 175, 152),
-                                    fontWeight: FontWeight.bold),
-                                child: AnimatedTextKit(
-                                    repeatForever: false,
-                                    totalRepeatCount: 20,
-                                    animatedTexts: [
-                                      FadeAnimatedText(
-                                          'Presione el area pelvica',
-                                          duration: Duration(seconds: 15)),
-                                      FadeAnimatedText('Relaje el area pelvica',
-                                          duration: Duration(seconds: 15)),
-                                    ])),
-                          ],
-                        ),
+                    child: Center(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          DefaultTextStyle(
+                              style: const TextStyle(
+                                  fontSize: 28,
+                                  color: Color.fromARGB(255, 1, 175, 152),
+                                  fontWeight: FontWeight.bold),
+                              child: AnimatedTextKit(
+                                  repeatForever: false,
+                                  totalRepeatCount: 4,
+                                  animatedTexts: [
+                                    FadeAnimatedText('Presione el area pelvica',
+                                        duration: Duration(seconds: 15)),
+                                    FadeAnimatedText('Relaje el area pelvica',
+                                        duration: Duration(seconds: 15)),
+                                  ])),
+                        ],
                       ),
                     ),
                   ),
                 ),
-                Positioned(
-                  top: 120,
-                  child: Builder(builder: (BuildContext context) {
+              ),
+              Positioned(
+                top: 120,
+                child: StreamBuilder<DocumentSnapshot>(
+                  stream: _stream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator(
+                        backgroundColor: Colors.grey,
+                        color: Colors.green,
+                        strokeWidth: 30,
+                      );
+                    }
+                    if (!snapshot.hasData || snapshot.data == null) {
+                      return Text('No hay datos disponibles');
+                    }
+
                     final DateTime now = DateTime.now();
                     final String formatter = DateFormat.yMd().format(now);
-                    final FirebaseAuth _auth = FirebaseAuth.instance;
-                    final currentuser = _auth.currentUser;
                     final valmax = FirebaseFirestore.instance
                         .collection('sensor')
                         .doc(currentuser?.uid)
@@ -114,101 +133,79 @@ class _Ejercicio3State extends State<Ejercicio3>
                                 });
                               })
                             });
-                    final DocsSens = FirebaseFirestore.instance
-                        .collection('sensor')
-                        .doc(currentuser?.uid)
-                        .collection('Ejercicio')
-                        .snapshots()
-                        .listen((event) {
-                      event.docs.forEach((element) {
-                        setState(() {
-                          valor = element.data()['valor'];
-                          valor = (valor / 1024);
-                        });
-                      });
-                    });
-                    return Container(
-                        alignment: Alignment.center,
-                        height: 300,
-                        //decoration: BoxDecoration(
-                        //borderRadius: BorderRadius.circular(20),
-                        //image: DecorationImage(
-                        //  image: AssetImage(
-                        //    'assets/imageninicio/imagenrosaabierta.jpg')),
-                        //color: Color.fromARGB(255, 37, 36, 36),
-                        //),
-                        child: Builder(builder: (BuildContext context) {
-                          String imagen = "assets/imageninicio/Rosacerrada.jpg";
-                          if ((valor / valormax) <= 0.30) {
-                            imagen = "assets/imageninicio/Rosaabierta.jpg";
-                          } else if ((valor / valormax) > 0.3 &&
-                              (valor / valormax) <= 0.60) {
-                            imagen = "assets/imageninicio/Rosasemiabierta.jpg";
-                          } else if ((valor / valormax) > 0.60 &&
-                              (valor / valormax) <= 0.90) {
-                            imagen = "assets/imageninicio/Rosasemicerrada.jpg";
-                          }
-                          return Image.asset(imagen);
-                        }));
-                  }),
+
+                    valor = snapshot.data!['valor'] / 1024;
+
+                    String imagen = "assets/imageninicio/Rosacerrada.jpg";
+                    if ((valor / valormax) <= 0.30) {
+                      imagen = "assets/imageninicio/Rosaabierta.jpg";
+                    } else if ((valor / valormax) > 0.3 &&
+                        (valor / valormax) <= 0.60) {
+                      imagen = "assets/imageninicio/Rosasemiabierta.jpg";
+                    } else if ((valor / valormax) > 0.60 &&
+                        (valor / valormax) <= 0.90) {
+                      imagen = "assets/imageninicio/Rosasemicerrada.jpg";
+                    }
+
+                    return Image.asset(imagen);
+                  },
                 ),
-                showbutton
-                    ? Positioned(
-                        bottom: 70,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            print(valor);
-                            final DateTime now = DateTime.now();
-                            final String formatter =
-                                DateFormat.yMd().format(now);
-                            final FirebaseAuth _auth = FirebaseAuth.instance;
-                            final currentuser = _auth.currentUser;
-                            final DocmentStream = FirebaseFirestore.instance
-                                .collection('sensor')
-                                .doc(currentuser?.uid)
-                                .collection('Ejercicio')
-                                .doc('sensor')
-                                .collection('data')
-                                .orderBy('emg', descending: true)
-                                .where('fechamax', isEqualTo: formatter)
-                                .where('emg', isNotEqualTo: 1024)
-                                .limit(1)
-                                .get()
-                                .then((value) {
-                              value.docs.forEach((element) async {
-                                DocumentReference anadevalmax =
-                                    await FirebaseFirestore.instance
-                                        .collection('sensor')
-                                        .doc(currentuser?.uid)
-                                        .collection('Ejercicio')
-                                        .doc('sensor')
-                                        .collection('valormax')
-                                        .add({
-                                  'emg': element.data()['emg'],
-                                  'fecha': element.data()['fechamax']
-                                });
+              ),
+              showbutton
+                  ? Positioned(
+                      bottom: 70,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          final DateTime now = DateTime.now();
+                          final String formatter = DateFormat.yMd().format(now);
+                          final FirebaseAuth _auth = FirebaseAuth.instance;
+                          final currentuser = _auth.currentUser;
+                          final DocmentStream = FirebaseFirestore.instance
+                              .collection('sensor')
+                              .doc(currentuser?.uid)
+                              .collection('Ejercicio')
+                              .doc('sensor')
+                              .collection('data')
+                              .orderBy('emg', descending: true)
+                              .where('fechamax', isEqualTo: formatter)
+                              .where('emg', isNotEqualTo: 1024)
+                              .limit(1)
+                              .get()
+                              .then((value) {
+                            value.docs.forEach((element) async {
+                              DocumentReference anadevalmax =
+                                  await FirebaseFirestore.instance
+                                      .collection('sensor')
+                                      .doc(currentuser?.uid)
+                                      .collection('Ejercicio')
+                                      .doc('sensor')
+                                      .collection('valormax')
+                                      .add({
+                                'emg': element.data()['emg'],
+                                'fecha': element.data()['fechamax']
                               });
                             });
-                            DocumentReference stopej1 = FirebaseFirestore
-                                .instance
-                                .collection('sensor')
-                                .doc(currentuser?.uid)
-                                .collection('Ejercicio')
-                                .doc('sensor');
-                            stopej1.update({
-                              'STATUS': 'OFF',
-                            });
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => TabBarPaciente()));
-                          },
-                          child: Text('Finalizar'),
-                        ))
-                    : Container(),
-              ],
-            ),
+                          });
+                          DocumentReference stopej1 = FirebaseFirestore.instance
+                              .collection('sensor')
+                              .doc(currentuser?.uid)
+                              .collection('Ejercicio')
+                              .doc('sensor');
+                          stopej1.update({
+                            'STATUS': 'OFF',
+                          });
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TabBarPaciente()));
+                        },
+                        child: Text('Finalizar'),
+                      ))
+                  : Container(),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

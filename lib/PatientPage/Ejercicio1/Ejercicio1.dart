@@ -1,11 +1,10 @@
-import 'dart:async';
-import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loginpage/PatientPage/Ejercicio1/thermometropage.dart';
 import 'package:loginpage/PatientPage/Homepagepatient.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Ejercicio1 extends StatefulWidget {
   const Ejercicio1({Key? key}) : super(key: key);
@@ -15,157 +14,189 @@ class Ejercicio1 extends StatefulWidget {
 }
 
 class _Ejercicio1State extends State<Ejercicio1> {
+  late Stream<DocumentSnapshot> _stream;
   bool showbutton = false;
-  late double _temp = 0.10;
+  late double _temp = 0;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    Future.delayed(Duration(seconds: 600), () {
+    Future.delayed(Duration(seconds: 120), () {
       setState(() {
         showbutton = true;
       });
     });
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    final currentuser = _auth.currentUser;
+
+    // Establecer el stream para escuchar los cambios en el documento específico
+    _stream = FirebaseFirestore.instance
+        .collection('sensor')
+        .doc(currentuser?.uid)
+        .collection('Ejercicio')
+        .doc('sensor')
+        .snapshots();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Ejercicio'),
-        ),
-        body: Center(
-          child: Container(
+      appBar: AppBar(
+        title: Text('Ejercicio'),
+      ),
+      body: Center(
+        child: Container(
+          alignment: Alignment.center,
+          child: Stack(
             alignment: Alignment.center,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Positioned(
-                  top: 50,
-                  width: 350,
+            children: [
+              Positioned(
+                top: 50,
+                width: 350,
+                child: Container(
+                  alignment: Alignment.center,
+                  margin: const EdgeInsets.only(left: 20, right: 20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.transparent,
+                  ),
                   child: Container(
                     alignment: Alignment.center,
-                    margin: const EdgeInsets.only(left: 20, right: 20),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.transparent),
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: Center(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            DefaultTextStyle(
-                                style: const TextStyle(
-                                    fontSize: 28,
-                                    color: Color.fromARGB(255, 1, 175, 152),
-                                    fontWeight: FontWeight.bold),
-                                child: AnimatedTextKit(
-                                    repeatForever: false,
-                                    totalRepeatCount: 20,
-                                    animatedTexts: [
-                                      FadeAnimatedText(
-                                          'Presione el area pelvica',
-                                          duration: Duration(seconds: 15)),
-                                      FadeAnimatedText('Relaje el area pelvica',
-                                          duration: Duration(seconds: 15)),
-                                    ])),
-                          ],
-                        ),
+                    child: Center(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          DefaultTextStyle(
+                            style: const TextStyle(
+                              fontSize: 28,
+                              color: Color.fromARGB(255, 1, 175, 152),
+                              fontWeight: FontWeight.bold,
+                            ),
+                            child: AnimatedTextKit(
+                              repeatForever: false,
+                              totalRepeatCount: 4,
+                              animatedTexts: [
+                                FadeAnimatedText(
+                                  'Presione el area pelvica',
+                                  duration: Duration(seconds: 15),
+                                ),
+                                FadeAnimatedText(
+                                  'Relaje el area pelvica',
+                                  duration: Duration(seconds: 15),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-                Positioned(
-                    top: 120,
-                    child: SizedBox(
-                        height: 420,
-                        width: 90,
-                        child: Builder(builder: (BuildContext context) {
+              ),
+              Positioned(
+                top: 120,
+                child: SizedBox(
+                  height: 420,
+                  width: 90,
+                  child: ThermometerStreamBuilder(stream: _stream),
+                ),
+              ),
+              showbutton
+                  ? Positioned(
+                      bottom: 70,
+                      child: ElevatedButton(
+                        onPressed: () async {
                           final FirebaseAuth _auth = FirebaseAuth.instance;
                           final currentuser = _auth.currentUser;
                           final DateTime now = DateTime.now();
                           final String formatter = DateFormat.yMd().format(now);
 
-                          final documentStream = FirebaseFirestore.instance
+                          final DocmentStream = FirebaseFirestore.instance
                               .collection('sensor')
                               .doc(currentuser?.uid)
                               .collection('Ejercicio')
-                              .snapshots()
-                              .listen((event) {
-                            event.docs.forEach((element) {
-                              setState(() {
-                                _temp = element.data()['valor'];
+                              .doc('sensor')
+                              .collection('data')
+                              .where('fechamax', isEqualTo: formatter)
+                              .where('emg', isNotEqualTo: 1024)
+                              .orderBy('emg', descending: true)
+                              .limit(1)
+                              .get()
+                              .then((value) {
+                            value.docs.forEach((element) async {
+                              DocumentReference anadevalmax =
+                                  await FirebaseFirestore.instance
+                                      .collection('sensor')
+                                      .doc(currentuser?.uid)
+                                      .collection('Ejercicio')
+                                      .doc('sensor')
+                                      .collection('valormax')
+                                      .add({
+                                'emg': element.data()['emg'],
+                                'fecha': element.data()['fechamax']
                               });
                             });
                           });
-                          return ThermometerWidget(
-                            borderColor: Colors.red,
-                            innerColor: Colors.green,
-                            indicatorColor: Colors.red,
-                            temperature: (_temp * 100) / 1024,
-                            height: 80,
+                          DocumentReference stopej1 = FirebaseFirestore.instance
+                              .collection('sensor')
+                              .doc(currentuser?.uid)
+                              .collection('Ejercicio')
+                              .doc('sensor');
+                          stopej1.update({
+                            'STATUS': 'OFF',
+                          });
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => TabBarPaciente()),
                           );
-                        }))),
-                showbutton
-                    ? Positioned(
-                        bottom: 70,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            final FirebaseAuth _auth = FirebaseAuth.instance;
-                            final currentuser = _auth.currentUser;
-                            final DateTime now = DateTime.now();
-                            final String formatter =
-                                DateFormat.yMd().format(now);
-
-                            final DocmentStream = FirebaseFirestore.instance
-                                .collection('sensor')
-                                .doc(currentuser?.uid)
-                                .collection('Ejercicio')
-                                .doc('sensor')
-                                .collection('data')
-                                .where('fechamax', isEqualTo: formatter)
-                                .where('emg', isNotEqualTo: 1024)
-                                .orderBy('emg', descending: true)
-                                .limit(1)
-                                .get()
-                                .then((value) {
-                              value.docs.forEach((element) async {
-                                DocumentReference anadevalmax =
-                                    await FirebaseFirestore.instance
-                                        .collection('sensor')
-                                        .doc(currentuser?.uid)
-                                        .collection('Ejercicio')
-                                        .doc('sensor')
-                                        .collection('valormax')
-                                        .add({
-                                  'emg': element.data()['emg'],
-                                  'fecha': element.data()['fechamax']
-                                });
-                              });
-                            });
-                            DocumentReference stopej1 = FirebaseFirestore
-                                .instance
-                                .collection('sensor')
-                                .doc(currentuser?.uid)
-                                .collection('Ejercicio')
-                                .doc('sensor');
-                            stopej1.update({
-                              'STATUS': 'OFF',
-                            });
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => TabBarPaciente()));
-                          },
-                          child: Text('Finalizar'),
-                        ))
-                    : Container(),
-              ],
-            ),
+                        },
+                        child: const Text('Finalizar'),
+                      ),
+                    )
+                  : Container(),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
+  }
+}
+
+class ThermometerStreamBuilder extends StatelessWidget {
+  final Stream<DocumentSnapshot> stream;
+
+  const ThermometerStreamBuilder({Key? key, required this.stream})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<DocumentSnapshot>(
+      stream: stream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // Widget de carga mientras se espera la conexión
+        }
+        if (!snapshot.hasData || snapshot.data == null) {
+          return Text('No hay datos disponibles'); // Manejar caso sin datos
+        }
+
+        // Procesar y mostrar los datos obtenidos
+        final newval = snapshot.data!['valor'];
+        double _temp = newval;
+        if (newval >= 100) {
+          _temp = 80.0;
+        }
+
+        return ThermometerWidget(
+          borderColor: Colors.red,
+          innerColor: Colors.green,
+          indicatorColor: Colors.red,
+          temperature: (_temp * 100) / 80,
+          height: 80,
+        );
+      },
+    );
   }
 }

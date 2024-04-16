@@ -75,6 +75,7 @@ class _LineChartsState extends State<LineCharts> {
       fechas.add(dates);
     }
     print(fechas);
+    print(widget.value);
     var snapShotValue = await FirebaseFirestore.instance
         .collection('sensor')
         .doc(widget.value)

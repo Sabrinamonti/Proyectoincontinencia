@@ -330,7 +330,7 @@ class _SignupPageState extends State<SignupPage> {
                               } catch (e) {
                                 print(e);
                               }
-                            } else {
+                            } else if (tipoUsuario == "Medico") {
                               try {
                                 await _auth
                                     .createUserWithEmailAndPassword(
