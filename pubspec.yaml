@@ -52,7 +52,12 @@ dependencies:
   intl: 
   fl_chart:
   rxdart:
-  syncfusion_flutter_charts: 
+  syncfusion_flutter_charts:
+  another_gauge: 1.0.0
+  flutter_blue_plus: ^1.3.1
+  flutter_blue:
+  permission_handler: ^10.4.3
+  
   
 dev_dependencies:
   flutter_test:

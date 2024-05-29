@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class CalendarioMed {
@@ -15,9 +14,9 @@ class CalendarioMed {
     List events = [];
     try {
       await eventsList.get().then((value) {
-        value.docs.forEach((element) {
+        for (var element in value.docs) {
           events.add(element.data());
-        });
+        }
       });
       return events;
     } catch (e) {

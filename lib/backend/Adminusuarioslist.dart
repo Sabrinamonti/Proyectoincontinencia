@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
 class AdminUsuarios {
   Future getUsers() async {
@@ -13,9 +12,9 @@ class AdminUsuarios {
     List itemslist = [];
     try {
       await documents.get().then((value) {
-        value.docs.forEach((element) {
+        for (var element in value.docs) {
           itemslist.add(element.data());
-        });
+        }
       });
       return itemslist;
     } catch (e) {

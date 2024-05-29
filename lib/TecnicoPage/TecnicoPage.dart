@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loginpage/TecnicoPage/EdituserPage.dart';
 import 'package:loginpage/backend/Adminusuarioslist.dart';
@@ -13,7 +12,7 @@ class TecnicoPage extends StatefulWidget {
 }
 
 class _TecnicoPageState extends State<TecnicoPage> {
-  TextEditingController? _textEditingController = TextEditingController();
+  final TextEditingController? _textEditingController = TextEditingController();
   List Usuarioslista = [];
   final _auth = FirebaseAuth.instance.currentUser;
   List items = [];
@@ -56,7 +55,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
             )),
         body: Column(
           children: [
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextField(
               decoration: const InputDecoration(
                   hintText: 'Buscar el Nombre del Usuario',
@@ -112,7 +111,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
                             FirebaseAuth.instance.signInWithEmailAndPassword(
                                 email: emailuser, password: passuser);
                           },
-                          child: Icon(Icons.edit),
+                          child: const Icon(Icons.edit),
                         ),
                       ),
                     );

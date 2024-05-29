@@ -4,7 +4,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:loginpage/MedicPage/homepageMed.dart';
 import 'package:loginpage/backend/Userslistcode.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rxdart/rxdart.dart';
 
 class UsersList extends StatefulWidget {
   const UsersList({Key? key}) : super(key: key);
@@ -15,7 +14,7 @@ class UsersList extends StatefulWidget {
 
 class _UsersListState extends State<UsersList> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  TextEditingController? _textEditingController = TextEditingController();
+  final TextEditingController? _textEditingController = TextEditingController();
   List usuarioslista = [];
   List usersdata = [];
   List filterUsers = [];
@@ -81,11 +80,11 @@ class _UsersListState extends State<UsersList> {
               filterUsers = usuarioslista;
             },
             controller: _textEditingController,
-            decoration: InputDecoration(hintText: 'Buscar Paciente'),
+            decoration: const InputDecoration(hintText: 'Buscar Paciente'),
           ),
         ),
         leading: ElevatedButton(
-          style: ElevatedButton.styleFrom(primary: Colors.purple[200]),
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.purple[200]),
           child: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.push(context,

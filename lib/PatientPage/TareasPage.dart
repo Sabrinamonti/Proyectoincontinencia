@@ -46,7 +46,7 @@ class _TareasTratamientosState extends State<TareasTratamientos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tareas de HOY'),
+        title: const Text('Tareas de HOY'),
         backgroundColor: Colors.redAccent,
       ),
       body: Container(
@@ -59,7 +59,7 @@ class _TareasTratamientosState extends State<TareasTratamientos> {
                     children: [
                       SlidableAction(
                         onPressed: (context) => onSlide(index),
-                        backgroundColor: Color.fromARGB(255, 17, 165, 11),
+                        backgroundColor: const Color.fromARGB(255, 17, 165, 11),
                         foregroundColor: Colors.white,
                         icon: Icons.check_circle,
                         label: 'Cumplido',
@@ -79,7 +79,7 @@ class _TareasTratamientosState extends State<TareasTratamientos> {
                               style: const TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.bold)),
                           subtitle: Text(tareaslista[index]['descripcion']),
-                          leading: Icon(Icons.task_alt),
+                          leading: const Icon(Icons.task_alt),
                           onTap: () {},
                         ),
                       );

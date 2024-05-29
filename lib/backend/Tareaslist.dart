@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DBtareas {
@@ -18,9 +17,9 @@ class DBtareas {
     List tasks = [];
     try {
       await tareaslist.get().then((value) {
-        value.docs.forEach((element) {
+        for (var element in value.docs) {
           tasks.add(element.data());
-        });
+        }
       });
       return tasks;
     } catch (e) {

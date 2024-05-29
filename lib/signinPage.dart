@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loginpage/loginPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum caracter { paciente, medico, tecnico }
@@ -14,7 +13,7 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  caracter? _character = null;
+  caracter? _character;
 //final AuthService auth = AuthService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
@@ -40,7 +39,7 @@ class _SignupPageState extends State<SignupPage> {
           style: TextStyle(color: Colors.white),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => const LoginPage()));
@@ -78,7 +77,7 @@ class _SignupPageState extends State<SignupPage> {
                               Container(
                                 padding:
                                     const EdgeInsets.only(top: 1, bottom: 8),
-                                child: Text(
+                                child: const Text(
                                   'Nombre Completo',
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
@@ -111,7 +110,7 @@ class _SignupPageState extends State<SignupPage> {
                               Container(
                                 padding:
                                     const EdgeInsets.only(top: 1, bottom: 8),
-                                child: Text(
+                                child: const Text(
                                   'Numero Telefónico',
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
@@ -144,7 +143,7 @@ class _SignupPageState extends State<SignupPage> {
                               Container(
                                 padding:
                                     const EdgeInsets.only(top: 1, bottom: 5),
-                                child: Text(
+                                child: const Text(
                                   'Nombre de usuario',
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
@@ -176,7 +175,7 @@ class _SignupPageState extends State<SignupPage> {
                               Container(
                                 padding:
                                     const EdgeInsets.only(top: 1, bottom: 8),
-                                child: Text(
+                                child: const Text(
                                   'Contraseña',
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
@@ -248,9 +247,8 @@ class _SignupPageState extends State<SignupPage> {
                       Container(
                           child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.blue,
-                          onPrimary: Colors.white,
-                          minimumSize: Size(120, 50),
+                          foregroundColor: Colors.white, backgroundColor: Colors.blue,
+                          minimumSize: const Size(120, 50),
                         ),
                         child: const Text('Registrar'),
                         onPressed: () async {
@@ -278,7 +276,7 @@ class _SignupPageState extends State<SignupPage> {
                                               .set({
                                             'STATUS': "OFF",
                                             'fecha': "",
-                                            'valor': 0
+                                            'valor': 0.0
                                           }),
                                           sens
                                               .doc(value.user?.uid)
@@ -286,14 +284,14 @@ class _SignupPageState extends State<SignupPage> {
                                               .doc('sensor')
                                               .collection('data')
                                               .doc('prueba')
-                                              .set({'emg': 0, 'fecha': ""}),
+                                              .set({'emg': 0.0, 'fecha': ""}),
                                           sens
                                               .doc(value.user?.uid)
                                               .collection('calibrar')
                                               .doc('sensor')
                                               .collection('valormax')
                                               .doc('prueba')
-                                              .set({'emg': 0, 'fecha': ""}),
+                                              .set({'emg': 0.0, 'fecha': ""}),
                                           sens
                                               .doc(value.user?.uid)
                                               .collection('Ejercicio')
@@ -301,7 +299,7 @@ class _SignupPageState extends State<SignupPage> {
                                               .set({
                                             'STATUS': "OFF",
                                             'fecha': "",
-                                            'valor': 0
+                                            'valor': 0.0
                                           }),
                                           sens
                                               .doc(value.user?.uid)
@@ -309,17 +307,17 @@ class _SignupPageState extends State<SignupPage> {
                                               .doc('sensor')
                                               .collection('data')
                                               .doc('prueba')
-                                              .set({'emg': 0, 'fecha': ""}),
+                                              .set({'emg': 0.0, 'fecha': ""}),
                                           sens
                                               .doc(value.user?.uid)
                                               .collection('Ejercicio')
                                               .doc('sensor')
                                               .collection('valormax')
                                               .doc('prueba')
-                                              .set({'emg': 0, 'fecha': ""})
+                                              .set({'emg': 0.0, 'fecha': ""})
                                         });
                                 ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(
+                                    .showSnackBar(const SnackBar(
                                   content: Text('Se registro exitosamente'),
                                 ));
                                 Navigator.push(
@@ -347,7 +345,7 @@ class _SignupPageState extends State<SignupPage> {
                                           })
                                         });
                                 ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(
+                                    .showSnackBar(const SnackBar(
                                   content: Text('Se registro exitosamente'),
                                 ));
                                 Navigator.push(

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loginpage/TecnicoPage/TecnicoPage.dart';
 import 'package:loginpage/TecnicoPage/funcionEdituser.dart';
@@ -61,10 +60,10 @@ class _EditpageState extends State<Editpage> {
               },
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
-          Divider(),
+          const Divider(),
           FutureBuilder(
               future: InfoPat.doc(widget.value).get(),
               builder: (BuildContext context,
@@ -75,9 +74,9 @@ class _EditpageState extends State<Editpage> {
                   return buildUserInfoDisplay(data['Nombre'], 'Nombre Completo',
                       EditName(value: widget.value));
                 }
-                return Text('Loading');
+                return const Text('Loading');
               }),
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
           FutureBuilder(
@@ -90,9 +89,9 @@ class _EditpageState extends State<Editpage> {
                   return buildUserInfoDisplay(data['Telefono'], 'Telefono',
                       EditPhoneFormPage(value: widget.value));
                 }
-                return Text('Loading');
+                return const Text('Loading');
               }),
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
           FutureBuilder(
@@ -107,7 +106,7 @@ class _EditpageState extends State<Editpage> {
                       'Nombre de Usuario',
                       EditEmailFormPage(value: widget.value));
                 }
-                return Text('Loading');
+                return const Text('Loading');
               }),
           FutureBuilder(
               future: InfoPat.doc(widget.value).get(),
@@ -119,7 +118,7 @@ class _EditpageState extends State<Editpage> {
                   return buildUserInfoDisplay(data['Contrasena'], 'Contrasena',
                       EditPassword(value: widget.value));
                 }
-                return Text('Loading');
+                return const Text('Loading');
               })
         ],
       ),
@@ -158,7 +157,7 @@ class _EditpageState extends State<Editpage> {
                     child: Text(getValue,
                         style: const TextStyle(fontSize: 16, height: 1.4)),
                   )),
-                  Icon(Icons.keyboard_arrow_right, color: Colors.grey, size: 40)
+                  const Icon(Icons.keyboard_arrow_right, color: Colors.grey, size: 40)
                 ],
               ),
             )

@@ -1,14 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:loginpage/MedicPage/BottombarMedic.dart';
 import 'package:loginpage/MedicPage/Userslist.dart';
 import 'package:loginpage/MedicPage/TablasPageMed.dart';
-import 'package:loginpage/MedicPage/Userslist.dart';
 import 'package:loginpage/backend/PacientesList.dart';
 import 'package:loginpage/loginPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:loginpage/MedicPage/profileinfoMed.dart';
 
 class homePage extends StatefulWidget {
   const homePage({Key? key}) : super(key: key);
@@ -20,7 +16,7 @@ class homePage extends StatefulWidget {
 class _homePageState extends State<homePage> {
   GlobalKey<RefreshIndicatorState> refreshKey =
       GlobalKey<RefreshIndicatorState>();
-  TextEditingController? _textEditingController = TextEditingController();
+  final TextEditingController? _textEditingController = TextEditingController();
   final _auth = FirebaseAuth.instance.currentUser;
   List items = [];
   List datospacientes = [];
@@ -61,7 +57,7 @@ class _homePageState extends State<homePage> {
             )),
         body: Column(
           children: [
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextField(
               decoration: const InputDecoration(
                   hintText: 'Buscar el Nombre del Paciente',
@@ -120,7 +116,7 @@ class _homePageState extends State<homePage> {
                                     builder: ((context) =>
                                         tablaspageMed(value: idusuario))));
                           },
-                          child: Text('Ver informacion'),
+                          child: const Text('Ver informacion'),
                         ),
                       ),
                     );
@@ -133,7 +129,7 @@ class _homePageState extends State<homePage> {
                       MaterialPageRoute(
                           builder: (context) => const UsersList()));
                 },
-                child: Text('Agregar Paciente')),
+                child: const Text('Agregar Paciente')),
             //BottomBar(),
           ],
         ));

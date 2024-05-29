@@ -1,14 +1,10 @@
 import 'dart:collection';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:loginpage/MedicPage/CreateEventPage.dart';
 import 'package:loginpage/backend/BackendCalendario/event.dart';
-import 'package:loginpage/backend/BackendCalendario/event_firebase.dart';
 import 'package:loginpage/backend/CalendarioMed.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:intl/intl.dart';
-import 'package:firebase_helpers/firebase_helpers.dart';
 
 class CalendarEvents extends StatefulWidget {
   final String value;
@@ -29,7 +25,7 @@ class _CalendarEventsState extends State<CalendarEvents> {
   DateTime _selectedDay = DateTime.now();
   List EventosDB = [];
   List<EventModel> eve = [];
-  List<dynamic> _selectedEvents = [];
+  final List<dynamic> _selectedEvents = [];
   //DateTime? selectedCalendarDate;
 
   late LinkedHashMap<DateTime, List> _groupedEvents;
@@ -63,13 +59,13 @@ class _CalendarEventsState extends State<CalendarEvents> {
 
   _groupEvents(List events) {
     _groupedEvents = LinkedHashMap(equals: isSameDay, hashCode: getHashCode);
-    events.forEach((event) {
+    for (var event in events) {
       var fecha =
           DateTime.fromMillisecondsSinceEpoch((event["eventDate"] as int));
       DateTime date = DateTime.utc(fecha.year, fecha.month, fecha.day, 12);
       if (_groupedEvents[date] == null) _groupedEvents[date] = [];
       _groupedEvents[date]?.add(event);
-    });
+    }
   }
 
   @override

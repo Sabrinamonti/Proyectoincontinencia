@@ -3,7 +3,6 @@ import 'package:loginpage/PatientPage/Ejercicio1/AccesoEjer1.dart';
 import 'package:loginpage/PatientPage/Ejercicio2/AccesoEjer2.dart';
 import 'package:loginpage/PatientPage/Ejercicio3/AccesoEjer3.dart';
 
-import 'Ejercicio1/AccesoEjer1.dart';
 
 class Ejerciciospage extends StatefulWidget {
   const Ejerciciospage({Key? key}) : super(key: key);
@@ -16,9 +15,9 @@ class _EjerciciospageState extends State<Ejerciciospage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color.fromARGB(255, 170, 184, 172),
+        backgroundColor: const Color.fromARGB(255, 170, 184, 172),
         body: SingleChildScrollView(
-          padding: EdgeInsets.all(15),
+          padding: const EdgeInsets.all(15),
           child: Center(
             child: Material(
               color: Colors.transparent,
@@ -64,12 +63,12 @@ class _EjerciciospageState extends State<Ejerciciospage> {
             width: 150,
             fit: BoxFit.cover,
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
           Text(
             text,
-            style: TextStyle(fontSize: 28, color: Colors.black),
+            style: const TextStyle(fontSize: 28, color: Colors.black),
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
         ]));
   }
 
@@ -87,12 +86,12 @@ class _EjerciciospageState extends State<Ejerciciospage> {
             width: 150,
             fit: BoxFit.cover,
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
           Text(
             text,
-            style: TextStyle(fontSize: 28, color: Colors.black),
+            style: const TextStyle(fontSize: 28, color: Colors.black),
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
         ]));
   }
 
@@ -110,12 +109,12 @@ class _EjerciciospageState extends State<Ejerciciospage> {
             width: 150,
             fit: BoxFit.cover,
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
           Text(
             text,
-            style: TextStyle(fontSize: 28, color: Colors.black),
+            style: const TextStyle(fontSize: 28, color: Colors.black),
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
         ]));
   }
 }

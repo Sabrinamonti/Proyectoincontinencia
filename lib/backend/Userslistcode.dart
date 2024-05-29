@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
 class DatabaseManagement {
@@ -31,9 +30,9 @@ class DatabaseManagement {
     var data = snapshot.data() as Map;
     var idpatuser = data['PacsId'] as List<dynamic>;
     List ids = [];
-    idpatuser.forEach((element) {
+    for (var element in idpatuser) {
       ids.add(element);
-    });
+    }
 
     final patientelist = FirebaseFirestore.instance
         .collection('Usuario')
@@ -42,9 +41,9 @@ class DatabaseManagement {
     List itemslist = [];
     try {
       await patientelist.get().then((value) {
-        value.docs.forEach((element) {
+        for (var element in value.docs) {
           itemslist.add(element.data());
-        });
+        }
       });
       return itemslist;
     } catch (e) {

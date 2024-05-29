@@ -22,13 +22,13 @@ class _TabBarPacienteState extends State<TabBarPaciente> {
           appBar: AppBar(
             title: const Text('Bienvenido'),
             automaticallyImplyLeading: false,
-            backgroundColor: Color.fromARGB(255, 58, 112, 86),
+            backgroundColor: const Color.fromARGB(255, 58, 112, 86),
             leading: IconButton(
-              icon: Icon(Icons.logout),
+              icon: const Icon(Icons.logout),
               onPressed: () async {
                 await FirebaseAuth.instance.signOut();
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => LoginPage()));
+                    MaterialPageRoute(builder: (context) => const LoginPage()));
               },
             ),
             bottom: const TabBar(tabs: [

@@ -27,6 +27,7 @@ class ThermometerWidget extends StatelessWidget {
     assert(stemWidth < width, 'stemWidth must be less than to width');
   }
 
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
       child: CustomPaint(
@@ -117,7 +118,7 @@ class ThermometerWidgetPainter extends CustomPainter {
     canvas.drawRRect(
         RRect.fromRectAndRadius(
             Rect.fromLTWH(inset, 0.0, stemWidth, size.height),
-            Radius.circular(10.0)),
+            const Radius.circular(10.0)),
         borderPaint);
 
     canvas.drawCircle(Offset(size.width / 2, size.height - bulbRadius),
@@ -126,7 +127,7 @@ class ThermometerWidgetPainter extends CustomPainter {
     canvas.drawRRect(
         RRect.fromRectAndRadius(
             Rect.fromLTWH(inset, 0.0, stemWidth, size.height),
-            Radius.circular(10.0)),
+            const Radius.circular(10.0)),
         innerPaint);
 
     canvas.drawCircle(Offset(size.width / 2, size.height - bulbRadius),
@@ -167,7 +168,7 @@ class ThermometerWidgetPainter extends CustomPainter {
     double markPoint = 0;
     for (int i = 1; i <= 5; i++) {
       canvas.drawLine(
-          Offset.zero, Offset(graduationTickLength, 0.0), borderPaint);
+          Offset.zero, const Offset(graduationTickLength, 0.0), borderPaint);
       canvas.save();
       canvas.translate(graduationTickLength, 0.0);
       textStyle = TextStyle(

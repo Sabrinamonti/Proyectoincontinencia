@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loginpage/PatientPage/Homepagepatient.dart';
+import 'package:another_gauge/another_gauge.dart';
 
 class Ejercicio2 extends StatefulWidget {
   const Ejercicio2({Key? key}) : super(key: key);
@@ -34,7 +35,7 @@ class _Ejercicio2State extends State<Ejercicio2> {
         .snapshots();
 
     // Iniciar temporizador para mostrar el botón después de un cierto tiempo
-    Future.delayed(Duration(seconds: 120), () {
+    Future.delayed(const Duration(seconds: 120), () {
       setState(() {
         showbutton = true;
       });
@@ -44,8 +45,10 @@ class _Ejercicio2State extends State<Ejercicio2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(221, 218, 80, 101),
       appBar: AppBar(
-        title: Text('Ejercicio'),
+        backgroundColor: Colors.black26,
+        title: const Text('Ejercicio'),
       ),
       body: Center(
         child: Container(
@@ -54,7 +57,7 @@ class _Ejercicio2State extends State<Ejercicio2> {
             alignment: Alignment.center,
             children: [
               Positioned(
-                top: 50,
+                top: 80,
                 width: 350,
                 child: Container(
                   alignment: Alignment.center,
@@ -82,11 +85,11 @@ class _Ejercicio2State extends State<Ejercicio2> {
                               animatedTexts: [
                                 FadeAnimatedText(
                                   'Presione el area pelvica',
-                                  duration: Duration(seconds: 15),
+                                  duration: const Duration(seconds: 15),
                                 ),
                                 FadeAnimatedText(
                                   'Relaje el area pelvica',
-                                  duration: Duration(seconds: 15),
+                                  duration: const Duration(seconds: 15),
                                 ),
                               ],
                             ),
@@ -113,7 +116,7 @@ class _Ejercicio2State extends State<Ejercicio2> {
                         );
                       }
                       if (!snapshot.hasData || snapshot.data == null) {
-                        return Text('No hay datos disponibles');
+                        return const Text('No hay datos disponibles');
                       }
 
                       final DateTime now = DateTime.now();
@@ -139,27 +142,33 @@ class _Ejercicio2State extends State<Ejercicio2> {
                           (snapshot.data!['valor'] / 1024) / (valormax / 1024);
 
                       return Stack(
-                        fit: StackFit.expand,
                         children: [
-                          CircularProgressIndicator(
-                            backgroundColor: Colors.grey,
-                            color: Colors.green,
-                            strokeWidth: 30,
-                            value: progress,
-                          ),
-                          Center(
-                            child: Text(
-                              '${(progress * 100).toStringAsFixed(1)}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                fontSize: 24,
-                              ),
-                            ),
+                          AnotherGauge(
+                            gaugeSize: 250,
+                            segments: [
+                              GaugeSegment('Low', 20, Colors.red),
+                              GaugeSegment('Medium', 40, Colors.orange),
+                              GaugeSegment('High', 40, Colors.green),
+                            ],
+                            valueFontSize: 25,
+                            currentValue: progress * 100,
+                            displayWidget: const Text('Nivel Contraccion',
+                                style: TextStyle(fontSize: 15)),
                           ),
                         ],
                       );
                     },
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 200,
+                child: Text(
+                  (progress * 100).toStringAsFixed(1) '%',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontSize: 24,
                   ),
                 ),
               ),
@@ -182,7 +191,7 @@ class _Ejercicio2State extends State<Ejercicio2> {
                               .limit(1)
                               .get()
                               .then((value) {
-                            value.docs.forEach((element) async {
+                            for (var element in value.docs) async {
                               DocumentReference anadevalmax =
                                   await FirebaseFirestore.instance
                                       .collection('sensor')
@@ -194,7 +203,7 @@ class _Ejercicio2State extends State<Ejercicio2> {
                                 'emg': element.data()['emg'],
                                 'fecha': element.data()['fechamax']
                               });
-                            });
+                            }
                           });
                           DocumentReference stopej1 = FirebaseFirestore.instance
                               .collection('sensor')
@@ -207,10 +216,10 @@ class _Ejercicio2State extends State<Ejercicio2> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => TabBarPaciente()),
+                                builder: (context) => const TabBarPaciente()),
                           );
                         },
-                        child: Text('Finalizar'),
+                        child: const Text('Finalizar'),
                       ),
                     )
                   : Container(),

@@ -55,10 +55,10 @@ class _ProfilePatientState extends State<ProfilePatient> {
               },
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
-          Divider(),
+          const Divider(),
           FutureBuilder(
               future: InfoPat.doc(Datauser?.uid).get(),
               builder: (BuildContext context,
@@ -67,11 +67,11 @@ class _ProfilePatientState extends State<ProfilePatient> {
                   Map<String, dynamic> data =
                       snapshot.data!.data() as Map<String, dynamic>;
                   return buildUserInfoDisplay(
-                      data['Nombre'], 'Nombre Completo', EditNameFormPage());
+                      data['Nombre'], 'Nombre Completo', const EditNameFormPage());
                 }
-                return Text('Loading');
+                return const Text('Loading');
               }),
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
           FutureBuilder(
@@ -82,11 +82,11 @@ class _ProfilePatientState extends State<ProfilePatient> {
                   Map<String, dynamic> data =
                       snapshot.data!.data() as Map<String, dynamic>;
                   return buildUserInfoDisplay(
-                      data['Telefono'], 'Telefono', EditPhoneFormPage());
+                      data['Telefono'], 'Telefono', const EditPhoneFormPage());
                 }
-                return Text('Loading');
+                return const Text('Loading');
               }),
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
           FutureBuilder(
@@ -97,9 +97,9 @@ class _ProfilePatientState extends State<ProfilePatient> {
                   Map<String, dynamic> data =
                       snapshot.data!.data() as Map<String, dynamic>;
                   return buildUserInfoDisplay(
-                      data['Email'], 'Nombre de Usuario', EditEmailFormPage());
+                      data['Email'], 'Nombre de Usuario', const EditEmailFormPage());
                 }
-                return Text('Loading');
+                return const Text('Loading');
               }),
         ],
       ),
@@ -138,7 +138,7 @@ class _ProfilePatientState extends State<ProfilePatient> {
                     child: Text(getValue,
                         style: const TextStyle(fontSize: 16, height: 1.4)),
                   )),
-                  Icon(Icons.keyboard_arrow_right, color: Colors.grey, size: 40)
+                  const Icon(Icons.keyboard_arrow_right, color: Colors.grey, size: 40)
                 ],
               ),
             )

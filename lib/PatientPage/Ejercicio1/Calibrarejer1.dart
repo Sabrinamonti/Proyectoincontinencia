@@ -4,7 +4,6 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:loginpage/PatientPage/Ejercicio1/Ejercicio1.dart';
 
 class CalibrarEsp extends StatefulWidget {
   const CalibrarEsp({Key? key}) : super(key: key);
@@ -16,14 +15,14 @@ class CalibrarEsp extends StatefulWidget {
 class _CalibrarEspState extends State<CalibrarEsp>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  Tween<double> _tween = Tween(begin: 0.75, end: 2);
+  final Tween<double> _tween = Tween(begin: 0.75, end: 2);
   bool showbutton = false;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(Duration(seconds: 30), () {
+    Future.delayed(const Duration(seconds: 30), () {
       setState(() {
         showbutton = true;
       });
@@ -38,9 +37,9 @@ class _CalibrarEspState extends State<CalibrarEsp>
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text('Calibracion'),
+        title: const Text('Calibracion'),
       ),
-      backgroundColor: Color.fromARGB(255, 248, 177, 245),
+      backgroundColor: const Color.fromARGB(255, 248, 177, 245),
       body: Container(
         alignment: Alignment.center,
         child: Stack(alignment: Alignment.center, children: [
@@ -52,7 +51,7 @@ class _CalibrarEspState extends State<CalibrarEsp>
               margin: const EdgeInsets.only(left: 20, right: 20),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: Color.fromARGB(255, 164, 179, 175)),
+                  color: const Color.fromARGB(255, 164, 179, 175)),
               child: Container(
                 alignment: Alignment.center,
                 child: Center(
@@ -61,15 +60,15 @@ class _CalibrarEspState extends State<CalibrarEsp>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       DefaultTextStyle(
-                          style: TextStyle(fontSize: 20, color: Colors.black),
+                          style: const TextStyle(fontSize: 20, color: Colors.black),
                           child: AnimatedTextKit(
                               repeatForever: false,
                               totalRepeatCount: 1,
                               animatedTexts: [
                                 RotateAnimatedText('Presione el area pelvica',
-                                    duration: Duration(seconds: 15)),
+                                    duration: const Duration(seconds: 15)),
                                 RotateAnimatedText('Relaje el area pelvica',
-                                    duration: Duration(seconds: 15)),
+                                    duration: const Duration(seconds: 15)),
                               ])),
                     ],
                   ),
@@ -84,7 +83,7 @@ class _CalibrarEspState extends State<CalibrarEsp>
                     child: ScaleTransition(
                   scale: _tween.animate(CurvedAnimation(
                       parent: _controller, curve: Curves.bounceInOut)),
-                  child: Icon(
+                  child: const Icon(
                     Icons.circle,
                     size: 100,
                     color: Colors.green,
@@ -112,7 +111,7 @@ class _CalibrarEspState extends State<CalibrarEsp>
                           .limit(1)
                           .get()
                           .then((value) {
-                        value.docs.forEach((element) async {
+                        for (var element in value.docs) async {
                           DocumentReference anadevalmax =
                               await FirebaseFirestore.instance
                                   .collection('sensor')
@@ -124,7 +123,7 @@ class _CalibrarEspState extends State<CalibrarEsp>
                             'emg': element.data()['emg'],
                             'fecha': element.data()['fechamax']
                           });
-                        });
+                        }
                       });
                       DocumentReference docsRef = FirebaseFirestore.instance
                           .collection('sensor')
@@ -142,12 +141,12 @@ class _CalibrarEspState extends State<CalibrarEsp>
                       valejer1.update({
                         'STATUS': 'ON',
                       });
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Ejercicio1()));
+                      // Navigator.push(
+                      //    context,
+                      //    MaterialPageRoute(
+                      //       builder: (context) => Ejercicio1()));
                     },
-                    child: Text('Iniciar ejercicio'),
+                    child: const Text('Iniciar ejercicio'),
                   ))
               : Container(),
         ]),

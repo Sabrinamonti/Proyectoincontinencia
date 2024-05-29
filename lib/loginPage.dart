@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:loginpage/MedicPage/BottombarMedic.dart';
-import 'package:loginpage/MedicPage/homepageMed.dart';
 import 'package:loginpage/PatientPage/Homepagepatient.dart';
 import 'package:loginpage/TecnicoPage/TecnicoPage.dart';
 import 'package:loginpage/signinPage.dart';
@@ -22,9 +21,9 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget createTitleWelcome() {
     return Container(
-      decoration: BoxDecoration(color: Colors.white),
+      decoration: const BoxDecoration(color: Colors.white),
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text(
+        const Text(
           'Bienvenido',
           textDirection: TextDirection.ltr,
           style: TextStyle(
@@ -47,10 +46,10 @@ class _LoginPageState extends State<LoginPage> {
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-          color: Color.fromARGB(255, 141, 188, 212),
+          color: const Color.fromARGB(255, 141, 188, 212),
           borderRadius: BorderRadius.circular(40)),
       child: TextFormField(
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
             icon: Icon(
               Icons.person,
               color: Colors.white,
@@ -70,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
       decoration: BoxDecoration(
           color: Colors.blueGrey, borderRadius: BorderRadius.circular(40)),
       child: TextFormField(
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
             icon: Icon(Icons.lock, color: Colors.white),
             hintText: 'Ingrese Contraseña'),
         obscureText: true,
@@ -86,17 +85,16 @@ class _LoginPageState extends State<LoginPage> {
       padding: const EdgeInsets.only(top: 32),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          primary: Colors.blue,
-          onPrimary: Colors.white,
-          minimumSize: Size(120, 50),
+          foregroundColor: Colors.white, backgroundColor: Colors.blue,
+          minimumSize: const Size(120, 50),
         ),
-        child: Text('Iniciar Session'),
+        child: const Text('Iniciar Session'),
         onPressed: () async {
           try {
             await _auth.signInWithEmailAndPassword(
                 email: email, password: password);
             ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Se ingreso exitosamente')));
+                const SnackBar(content: Text('Se ingreso exitosamente')));
             final Datauser = _auth.currentUser;
             CollectionReference documents =
                 FirebaseFirestore.instance.collection('Usuario');
@@ -119,11 +117,11 @@ class _LoginPageState extends State<LoginPage> {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const TecnicoPage()));
             }
-          } on FirebaseAuthException catch (e) {
+          } on FirebaseAuthException {
             showDialog(
                 context: context,
                 builder: (ctx) =>
-                    AlertDialog(title: Text('Ingrese los datos correctos')));
+                    const AlertDialog(title: Text('Ingrese los datos correctos')));
           }
         },
       ),
@@ -132,10 +130,10 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget createAccount(BuildContext context) {
     return Container(
-        padding: EdgeInsets.only(top: 30),
+        padding: const EdgeInsets.only(top: 30),
         child: Center(
           child: TextButton(
-            child: Text(
+            child: const Text(
               'Crear nueva cuenta',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),

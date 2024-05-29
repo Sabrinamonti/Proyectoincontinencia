@@ -24,7 +24,7 @@ class _EditNameFormPageState extends State<EditNameFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Editar Nombre'),
+        title: const Text('Editar Nombre'),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -50,7 +50,7 @@ class _EditNameFormPageState extends State<EditNameFormPage> {
                       fontWeight: FontWeight.bold,
                     )),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 6,
               ),
               Column(
@@ -69,7 +69,7 @@ class _EditNameFormPageState extends State<EditNameFormPage> {
                           }
                         },
                         decoration:
-                            InputDecoration(labelText: 'Nombre completo'),
+                            const InputDecoration(labelText: 'Nombre completo'),
                         controller: NombreController,
                       ),
                     ),
@@ -127,7 +127,7 @@ class _EditPhoneFormPageState extends State<EditPhoneFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Editar Telefono'),
+        title: const Text('Editar Telefono'),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -170,7 +170,7 @@ class _EditPhoneFormPageState extends State<EditPhoneFormPage> {
                             return null;
                           }
                         },
-                        decoration: InputDecoration(labelText: 'Telefono'),
+                        decoration: const InputDecoration(labelText: 'Telefono'),
                         controller: TelefController,
                       ),
                     ),
@@ -228,7 +228,7 @@ class _EditEmailFormPageState extends State<EditEmailFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Editar Email'),
+        title: const Text('Editar Email'),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -271,7 +271,7 @@ class _EditEmailFormPageState extends State<EditEmailFormPage> {
                             return null;
                           }
                         },
-                        decoration: InputDecoration(labelText: 'Email'),
+                        decoration: const InputDecoration(labelText: 'Email'),
                         controller: emailController,
                       ),
                     ),
@@ -320,7 +320,7 @@ class _EditImagePageState extends State<EditImagePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Editar Imagen de perfil'),
+        title: const Text('Editar Imagen de perfil'),
         leading: IconButton(
           onPressed: () {},
           icon: const Icon(Icons.arrow_back),
@@ -330,14 +330,14 @@ class _EditImagePageState extends State<EditImagePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          SizedBox(
+          const SizedBox(
               width: 330,
-              child: const Text(
+              child: Text(
                 'Subir una foto',
                 style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
               )),
           Padding(
-            padding: EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.only(top: 20),
             child: SizedBox(
               width: 330,
               child: GestureDetector(
@@ -346,7 +346,7 @@ class _EditImagePageState extends State<EditImagePage> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: 40),
+            padding: const EdgeInsets.only(top: 40),
             child: Align(
               alignment: Alignment.bottomCenter,
               child: SizedBox(
@@ -375,7 +375,7 @@ class DisplayImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = Color.fromRGBO(64, 105, 225, 1);
+    const color = Color.fromRGBO(64, 105, 225, 1);
 
     return Center(
       child: Stack(
@@ -397,7 +397,7 @@ class DisplayImage extends StatelessWidget {
     return CircleAvatar(
       radius: 75,
       backgroundColor: color,
-      child: CircleAvatar(
+      child: const CircleAvatar(
         // backgroundImage:
         radius: 70,
       ),

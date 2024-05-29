@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:loginpage/PatientPage/Ejercicio1/Calibrarejer1.dart';
-import 'package:loginpage/PatientPage/Ejercicio1/Ejercicio1.dart';
+import 'package:loginpage/PatientPage/Ejercicio1/ConexionBlueEj1.dart';
 
 class inicioEjer1 extends StatelessWidget {
   const inicioEjer1({Key? key}) : super(key: key);
@@ -11,10 +10,10 @@ class inicioEjer1 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 4, 165, 149),
+        backgroundColor: const Color.fromARGB(255, 4, 165, 149),
         title: const Text('Instrucciones'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -29,8 +28,8 @@ class inicioEjer1 extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             child: Container(
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.all(10),
+              decoration: const BoxDecoration(
                   gradient: LinearGradient(
                 colors: [Colors.indigo, Colors.black],
                 begin: Alignment.topLeft,
@@ -64,16 +63,16 @@ class inicioEjer1 extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Card(
-            color: Color.fromARGB(255, 160, 159, 159),
+            color: const Color.fromARGB(255, 160, 159, 159),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
             child: Padding(
-              padding: EdgeInsets.all(18),
+              padding: const EdgeInsets.all(18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
@@ -89,16 +88,16 @@ class inicioEjer1 extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Card(
-            color: Color.fromARGB(255, 214, 114, 114),
+            color: const Color.fromARGB(255, 214, 114, 114),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
             child: Padding(
-              padding: EdgeInsets.all(18),
+              padding: const EdgeInsets.all(18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
@@ -126,10 +125,10 @@ class inicioEjer1 extends StatelessWidget {
               docsRef.update({
                 'STATUS': 'ON',
               });
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const Ejercicio1()));
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => const BluePage()));
             },
-            child: Text('Iniciar Ejercicio'),
+            child: const Text('Iniciar Ejercicio'),
           )
         ],
       ),

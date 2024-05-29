@@ -1,13 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fl_chart/fl_chart.dart' as charts;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:intl/intl.dart';
-import 'package:loginpage/MedicPage/LineBar.dart';
-import 'package:loginpage/MedicPage/statcontroller.dart';
-import 'package:loginpage/backend/CodeEjercicio1.dart';
 import 'package:collection/collection.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -54,9 +50,9 @@ class _LineChartsState extends State<LineCharts> {
         .limit(5)
         .get()
         .then((value) {
-      value.docs.forEach((element) async {
+      for (var element in value.docs) async {
         itemslist.add(element.data()['emg']);
-      });
+      }
     });
     return itemslist
         .mapIndexed(
@@ -132,7 +128,7 @@ class _LineChartsState extends State<LineCharts> {
                       dataSource: _charData,
                       xValueMapper: (Datapoints sales, _) => sales.dia,
                       yValueMapper: (Datapoints sales, _) => sales.val,
-                      dataLabelSettings: DataLabelSettings(isVisible: true),
+                      dataLabelSettings: const DataLabelSettings(isVisible: true),
                       enableTooltip: true)
                 ],
                 primaryYAxis: NumericAxis(labelFormat: '{value}V'),
@@ -220,7 +216,7 @@ Widget bottomTitleWidgets(double value, TitleMeta meta) {
   int largo = fechas.length;
   Widget text = Container();
   for (int i = 0; i <= largo + 1; i++) {
-    text = Text("HOLA ${i}", style: style);
+    text = Text("HOLA $i", style: style);
   }
 
   return SideTitleWidget(

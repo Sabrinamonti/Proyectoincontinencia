@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:loginpage/MedicPage/TablasPageMed.dart';
-import 'package:loginpage/MedicPage/homepageMed.dart';
-import 'package:loginpage/MedicPage/tablechartPage.dart';
 import 'package:intl/intl.dart';
-import 'package:loginpage/backend/BackendCalendario/event.dart';
-import 'package:loginpage/backend/BackendCalendario/event_firebase.dart';
-import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:loginpage/MedicPage/tablechartPage.dart';
 
 class Createevent extends StatefulWidget {
   final String value;
@@ -93,7 +87,7 @@ class _CreateeventState extends State<Createevent> {
                   onPressed: () => pickDateTime(),
                   child: const Text("Escoger Fechas"),
                   style: ElevatedButton.styleFrom(
-                      primary: Color.fromARGB(255, 75, 131, 11)),
+                      backgroundColor: const Color.fromARGB(255, 75, 131, 11)),
                 )),
               ],
             ),
@@ -121,7 +115,7 @@ class _CreateeventState extends State<Createevent> {
             //_formkey.currentState?.save();
             if (_formkey.currentState!.validate()) {
               CollectionReference ref =
-                  await FirebaseFirestore.instance.collection('Evento');
+                  FirebaseFirestore.instance.collection('Evento');
               String docId = ref.doc().id;
               await ref.doc(docId).set({
                 'id': widget.value,
@@ -136,7 +130,7 @@ class _CreateeventState extends State<Createevent> {
                 final A = DateTime(
                     startdate.year, startdate.month, startdate.day + 1);
                 CollectionReference refs =
-                    await FirebaseFirestore.instance.collection('Evento');
+                    FirebaseFirestore.instance.collection('Evento');
                 String docsId = refs.doc().id;
                 await ref.doc(docsId).set({
                   'id': widget.value,
@@ -165,7 +159,7 @@ class _CreateeventState extends State<Createevent> {
   static String toDate(DateTime datetime) {
     final date = DateFormat.yMMMEd('es_ES').format(datetime);
 
-    return '$date';
+    return date;
   }
 
   Widget buildDateField({
@@ -177,7 +171,7 @@ class _CreateeventState extends State<Createevent> {
         children: [
           Text(
             header,
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           ListTile(
             title: Text(text),
@@ -198,5 +192,6 @@ class _CreateeventState extends State<Createevent> {
     setState(() {
       dateRange = date;
     });
+    return null;
   }
 }

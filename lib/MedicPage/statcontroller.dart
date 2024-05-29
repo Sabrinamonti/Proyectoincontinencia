@@ -1,9 +1,3 @@
-import 'dart:math';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get/get.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:loginpage/backend/CodeEjercicio1.dart';
 
 /*class StatController extends GetxController {
   RxString todayStat = "".obs;

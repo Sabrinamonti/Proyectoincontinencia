@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:loginpage/PatientPage/Ejercicio2/Calibrarejer2.dart';
 import 'package:loginpage/PatientPage/Ejercicio3/Calibrarejer3.dart';
 
 class inicioEjer3 extends StatelessWidget {
@@ -11,10 +10,10 @@ class inicioEjer3 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 4, 165, 149),
+        backgroundColor: const Color.fromARGB(255, 4, 165, 149),
         title: const Text('Instrucciones'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -29,8 +28,8 @@ class inicioEjer3 extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             child: Container(
-              padding: EdgeInsets.all(15),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.all(15),
+              decoration: const BoxDecoration(
                   gradient: LinearGradient(
                 colors: [Colors.indigo, Colors.black],
                 begin: Alignment.topLeft,
@@ -57,16 +56,16 @@ class inicioEjer3 extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Card(
-            color: Color.fromARGB(255, 160, 159, 159),
+            color: const Color.fromARGB(255, 160, 159, 159),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
             child: Padding(
-              padding: EdgeInsets.all(18),
+              padding: const EdgeInsets.all(18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
@@ -82,16 +81,16 @@ class inicioEjer3 extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Card(
-            color: Color.fromARGB(255, 214, 114, 114),
+            color: const Color.fromARGB(255, 214, 114, 114),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
             child: Padding(
-              padding: EdgeInsets.all(18),
+              padding: const EdgeInsets.all(18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
@@ -125,7 +124,7 @@ class inicioEjer3 extends StatelessWidget {
                   MaterialPageRoute(
                       builder: (context) => const CalibrarEspEj3()));
             },
-            child: Text('Iniciar Calibración'),
+            child: const Text('Iniciar Calibración'),
           )
         ],
       ),

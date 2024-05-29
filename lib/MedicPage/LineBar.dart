@@ -2,14 +2,13 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:get/get.dart';
-import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../backend/CodeEjercicio1.dart';
 
 class LineBar extends StatefulWidget {
   final String value;
-  LineBar({Key? key, required this.value}) : super(key: key);
+  const LineBar({Key? key, required this.value}) : super(key: key);
 
   @override
   State<LineBar> createState() => _LineBarState();
@@ -44,14 +43,14 @@ class _LineBarState extends State<LineBar> {
   }
 
   void setPreviousWeek() {
-    selectedDate = selectedDate.subtract(Duration(days: 7));
+    selectedDate = selectedDate.subtract(const Duration(days: 7));
     setNextWeekButtonVisibility();
     currentWeek.value = getWeekDisplayDate(selectedDate);
     getDailyStatList(selectedDate);
   }
 
   void setNextWeek() {
-    selectedDate = selectedDate.add(Duration(days: 7));
+    selectedDate = selectedDate.add(const Duration(days: 7));
     setNextWeekButtonVisibility();
     currentWeek.value = getWeekDisplayDate(selectedDate);
     getDailyStatList(selectedDate);
@@ -186,8 +185,8 @@ class _LineBarState extends State<LineBar> {
       children: [
         _buildSectionTitle('Primera Seccion', 'unit'),
         Obx(() => _buildWeekIndicators(dailyStatList1.call(), 1)),
-        Padding(
-          padding: const EdgeInsets.only(top: 8),
+        const Padding(
+          padding: EdgeInsets.only(top: 8),
         ),
       ],
     );
@@ -199,7 +198,7 @@ class _LineBarState extends State<LineBar> {
         child: Padding(
             padding: const EdgeInsets.all(16),
             child: DecoratedBox(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(8)),
                 color: Colors.pink,
               ),
@@ -207,7 +206,7 @@ class _LineBarState extends State<LineBar> {
                 padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                 child: Text(
                   currentWeek.value,
-                  style: TextStyle(fontSize: 17, color: Colors.white),
+                  style: const TextStyle(fontSize: 17, color: Colors.white),
                 ),
               ),
             ))));
@@ -224,9 +223,9 @@ class _LineBarState extends State<LineBar> {
               },
               elevation: 2,
               fillColor: Colors.pink,
-              child: Icon(Icons.arrow_back, color: Colors.white),
-              padding: EdgeInsets.all(8),
-              shape: CircleBorder(),
+              child: const Icon(Icons.arrow_back, color: Colors.white),
+              padding: const EdgeInsets.all(8),
+              shape: const CircleBorder(),
             )));
   }
 
@@ -243,9 +242,9 @@ class _LineBarState extends State<LineBar> {
                 },
                 elevation: 2,
                 fillColor: Colors.pink,
-                child: Icon(Icons.arrow_forward, color: Colors.white),
-                padding: EdgeInsets.all(8),
-                shape: CircleBorder(),
+                child: const Icon(Icons.arrow_forward, color: Colors.white),
+                padding: const EdgeInsets.all(8),
+                shape: const CircleBorder(),
               )),
         )));
   }
@@ -258,9 +257,9 @@ class _LineBarState extends State<LineBar> {
             Expanded(
                 child: Text(title,
                     style:
-                        TextStyle(fontSize: 23, fontWeight: FontWeight.bold))),
+                        const TextStyle(fontSize: 23, fontWeight: FontWeight.bold))),
             Text(subTitle,
-                style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold))
+                style: const TextStyle(fontSize: 23, fontWeight: FontWeight.bold))
           ],
         ));
   }
@@ -300,7 +299,7 @@ class _LineBarState extends State<LineBar> {
                 child: Visibility(
                     visible: model.isSelected,
                     child: DecoratedBox(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(8)),
                         ),
                         child: Center(
@@ -310,18 +309,18 @@ class _LineBarState extends State<LineBar> {
                                 child: Text(
                                   '${model.stat} uni',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 15,
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold),
                                 )))))),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Expanded(
                 child: NeumorphicIndicator(
               width: 25,
               percent: getStatPercentage(model.stat, type),
             )),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             DecoratedBox(
               decoration: _getDayDecoratedBox(model.isToday),
               child: Padding(
@@ -334,12 +333,12 @@ class _LineBarState extends State<LineBar> {
 
   _getDayDecoratedBox(bool isToday) {
     if (isToday) {
-      return BoxDecoration(
+      return const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(4)),
         color: Colors.pink,
       );
     } else {
-      return BoxDecoration();
+      return const BoxDecoration();
     }
   }
 }
@@ -368,9 +367,9 @@ extension DateExtension on DateTime {
   String toFormatString(String format) => DateFormat(format).format(this);
 
   bool isSameDate(DateTime other) {
-    return this.year == other.year &&
-        this.month == other.month &&
-        this.day == other.day;
+    return year == other.year &&
+        month == other.month &&
+        day == other.day;
   }
 }
 
@@ -425,17 +424,16 @@ const Color kBaseColor = Color(0xFFE8E8E8);
 
 final ThemeData appThemeData = ThemeData(
   primaryColor: kDefaultTextColor,
-  accentColor: kAccentColor,
   splashColor: kLightestGrey,
   highlightColor: kLightGrey,
   scaffoldBackgroundColor: kBaseColor,
   textTheme: _textTheme,
-  iconTheme: IconThemeData(
+  iconTheme: const IconThemeData(
     color: kDefaultTextColor,
-  ),
+  ), colorScheme: ColorScheme.fromSwatch().copyWith(secondary: kAccentColor),
 );
 
-final _textTheme = GoogleFonts.kanitTextTheme(TextTheme(
+final _textTheme = GoogleFonts.kanitTextTheme(const TextTheme(
   headline1: TextStyle(
       fontSize: 34, fontWeight: FontWeight.bold, color: kDefaultTextColor),
   headline2: TextStyle(
@@ -448,7 +446,7 @@ final _textTheme = GoogleFonts.kanitTextTheme(TextTheme(
   ),
 ));
 
-final neumorphicTheme = NeumorphicThemeData(
+const neumorphicTheme = NeumorphicThemeData(
     defaultTextColor: Color(0xFF30475E),
     accentColor: Color(0xFFF05454),
     variantColor: Color(0xFFFFA45B),

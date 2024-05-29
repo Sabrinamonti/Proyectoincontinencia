@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loginpage/PatientPage/Ejercicio1/thermometropage.dart';
@@ -5,23 +7,32 @@ import 'package:loginpage/PatientPage/Homepagepatient.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 
 class Ejercicio1 extends StatefulWidget {
-  const Ejercicio1({Key? key}) : super(key: key);
+  const Ejercicio1({Key? key, required this.device}) : super(key: key);
+  final BluetoothDevice device;
 
   @override
   State<Ejercicio1> createState() => _Ejercicio1State();
 }
 
 class _Ejercicio1State extends State<Ejercicio1> {
+  final String SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
+  final String CHARACTERISTIC_UUID = "beb5483e-36e1-4688-b7f5-ea07361b26a8";
+  late bool isReady;
+  late Stream<List<int>> stream;
+
   late Stream<DocumentSnapshot> _stream;
   bool showbutton = false;
-  late double _temp = 0;
+  late final double _temp = 0;
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 120), () {
+    connectToDevice();
+
+    Future.delayed(const Duration(seconds: 120), () {
       setState(() {
         showbutton = true;
       });
@@ -38,11 +49,92 @@ class _Ejercicio1State extends State<Ejercicio1> {
         .snapshots();
   }
 
+  connectToDevice() async {
+    if (widget.device == null) {
+      _pop();
+      return;
+    }
+
+    Timer(const Duration(seconds: 10), () {
+      if (!isReady) {
+        disconnectFromDevice();
+        _pop();
+      }
+    });
+
+    await widget.device.connect();
+    discorverServices();
+  }
+
+  disconnectFromDevice() {
+    if (widget.device == null) {
+      _pop();
+      return;
+    }
+
+    widget.device.disconnect();
+  }
+
+  discorverServices() async {
+    if (widget.device == null) {
+      _pop();
+      return;
+    }
+
+    List<BluetoothService> services = await widget.device.discoverServices();
+    for (var service in services) {
+      if (service.uuid.toString() == SERVICE_UUID) {
+        for (var characteristics in service.characteristics) {
+          if (characteristics.uuid.toString() == CHARACTERISTIC_UUID) {
+            characteristics.setNotifyValue(!characteristics.isNotifying);
+            stream = characteristics.value;
+
+            setState(() {
+              isReady = true;
+            });
+          }
+        }
+      }
+    }
+
+    if (!isReady) {
+      _pop();
+    }
+  }
+
+  _onWillPop() {
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: const Text("Esta seguro?"),
+              content: const Text("Quiere desconectar el dispositivo?"),
+              actions: <Widget>[
+                ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text("No")),
+                ElevatedButton(
+                    onPressed: () {
+                      disconnectFromDevice();
+                      Navigator.of(context).pop(true);
+                    },
+                    child: const Text("Si")),
+              ],
+            ));
+  }
+
+  _pop() {
+    Navigator.of(context).pop(true);
+  }
+
+  String _dataParse(dataFromDevice) {
+    return utf8.decode(dataFromDevice);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ejercicio'),
+        title: const Text('Ejercicio'),
       ),
       body: Center(
         child: Container(
@@ -79,11 +171,11 @@ class _Ejercicio1State extends State<Ejercicio1> {
                               animatedTexts: [
                                 FadeAnimatedText(
                                   'Presione el area pelvica',
-                                  duration: Duration(seconds: 15),
+                                  duration: const Duration(seconds: 15),
                                 ),
                                 FadeAnimatedText(
                                   'Relaje el area pelvica',
-                                  duration: Duration(seconds: 15),
+                                  duration: const Duration(seconds: 15),
                                 ),
                               ],
                             ),
@@ -97,11 +189,41 @@ class _Ejercicio1State extends State<Ejercicio1> {
               Positioned(
                 top: 120,
                 child: SizedBox(
-                  height: 420,
+                  height: 350,
                   width: 90,
                   child: ThermometerStreamBuilder(stream: _stream),
                 ),
               ),
+              Container(
+                  child: !isReady
+                      ? const Center(child: Text("Esperando...."))
+                      : Container(
+                          child: StreamBuilder<List<int>>(
+                            stream: stream,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<List<int>> snapshot) {
+                              if (snapshot.hasError) {
+                                return Text("Error ${snapshot.error}");
+                              }
+                              if (snapshot.connectionState ==
+                                  ConnectionState.active) {
+                                var _currentvalue = _dataParse(snapshot.data);
+
+                                return Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Text("Valor del sensor es:"),
+                                      Text(_currentvalue),
+                                    ],
+                                  ),
+                                );
+                              } else {
+                                return const Text("Revise Conexion");
+                              }
+                            },
+                          ),
+                        )),
               showbutton
                   ? Positioned(
                       bottom: 70,
@@ -124,7 +246,7 @@ class _Ejercicio1State extends State<Ejercicio1> {
                               .limit(1)
                               .get()
                               .then((value) {
-                            value.docs.forEach((element) async {
+                            for (var element in value.docs) async {
                               DocumentReference anadevalmax =
                                   await FirebaseFirestore.instance
                                       .collection('sensor')
@@ -136,7 +258,7 @@ class _Ejercicio1State extends State<Ejercicio1> {
                                 'emg': element.data()['emg'],
                                 'fecha': element.data()['fechamax']
                               });
-                            });
+                            }
                           });
                           DocumentReference stopej1 = FirebaseFirestore.instance
                               .collection('sensor')
@@ -149,7 +271,7 @@ class _Ejercicio1State extends State<Ejercicio1> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => TabBarPaciente()),
+                                builder: (context) => const TabBarPaciente()),
                           );
                         },
                         child: const Text('Finalizar'),
@@ -176,10 +298,10 @@ class ThermometerStreamBuilder extends StatelessWidget {
       stream: stream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Widget de carga mientras se espera la conexión
+          return const CircularProgressIndicator(); // Widget de carga mientras se espera la conexión
         }
         if (!snapshot.hasData || snapshot.data == null) {
-          return Text('No hay datos disponibles'); // Manejar caso sin datos
+          return const Text('No hay datos disponibles'); // Manejar caso sin datos
         }
 
         // Procesar y mostrar los datos obtenidos

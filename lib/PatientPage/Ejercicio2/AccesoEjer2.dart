@@ -10,10 +10,10 @@ class inicioEjer2 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 4, 165, 149),
+        backgroundColor: const Color.fromARGB(255, 4, 165, 149),
         title: const Text('Instrucciones'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -28,8 +28,8 @@ class inicioEjer2 extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             child: Container(
-              padding: EdgeInsets.all(15),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.all(15),
+              decoration: const BoxDecoration(
                   gradient: LinearGradient(
                 colors: [Colors.indigo, Colors.black],
                 begin: Alignment.topLeft,
@@ -56,16 +56,16 @@ class inicioEjer2 extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Card(
-            color: Color.fromARGB(255, 160, 159, 159),
+            color: const Color.fromARGB(255, 160, 159, 159),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
             child: Padding(
-              padding: EdgeInsets.all(18),
+              padding: const EdgeInsets.all(18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
@@ -81,16 +81,16 @@ class inicioEjer2 extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Card(
-            color: Color.fromARGB(255, 214, 114, 114),
+            color: const Color.fromARGB(255, 214, 114, 114),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
             child: Padding(
-              padding: EdgeInsets.all(18),
+              padding: const EdgeInsets.all(18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
@@ -124,7 +124,7 @@ class inicioEjer2 extends StatelessWidget {
                   MaterialPageRoute(
                       builder: (context) => const CalibrarEspEj2()));
             },
-            child: Text('Iniciar Calibración'),
+            child: const Text('Iniciar Calibración'),
           )
         ],
       ),
